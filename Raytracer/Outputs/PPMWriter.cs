@@ -1,0 +1,75 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
+using Raytracer.TextInterfacing;
+
+namespace Raytracer.Outputs
+{
+    class ImageCustom
+    {
+        public int height { get; set; }
+        public int width { get; set; }
+
+        public ImageCustom(int w = 1920, int h = 1080)
+        {
+            this.width = w;
+            this.height = h;
+        }
+    }
+    class PPMWriter : IDisposable
+    {
+        private StreamWriter writer;
+        private string name;
+
+        public PPMWriter(string name)
+        {
+            this.name = name + ".ppm";
+            writer = new StreamWriter(this.name);
+        }
+
+        public void PutHeader(ImageCustom image)
+        {
+            writer.WriteLine("P3");
+            writer.WriteLine($"{image.width} {image.height}");
+            writer.WriteLine("255");
+        }
+
+        public void PutPixels(ImageCustom image)
+        {
+            for (int i = 0; i < image.height; i++)
+            {
+            ProgressReporting.ProgressMessage(image.height - i);
+                for (int j = 0; j < image.width; j++)
+                {
+                    var r = (double)j / (image.width - 1);
+                    var g = (double)i / (image.height - 1);
+                    var b = 0.0;
+
+                    int ir = (int)(255.999 * r);
+                    int ig = (int)(255.999 * g);
+                    int ib = (int)(255.999 * b);
+
+                    writer.WriteLine($"{ir} {ig} {ib}");
+                }
+            }
+            ProgressReporting.DoneMessage();
+        }
+
+        public void GenerateImage(ImageCustom image)
+        {
+            PutHeader(image);
+            PutPixels(image);
+            //flushing here is critical,
+            //otherwise various bugs appear
+            writer.Flush();
+        }
+
+        public void Dispose()
+        {
+            writer.Close();
+        }
+    }
+}
