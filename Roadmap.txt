@@ -3,3 +3,7 @@
 add jpeg support
 
 -----Known Issues
+ 
+image is a bit diferent 
+color positions are reversed 
+find indexing errors

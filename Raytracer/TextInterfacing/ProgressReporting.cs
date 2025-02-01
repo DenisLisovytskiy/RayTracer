@@ -8,7 +8,7 @@ namespace Raytracer.TextInterfacing
 {
     public class ProgressReporting
     {
-        public static void DoneMessage()
+        public static void DoneMessage()    
         {
             Console.WriteLine("ImageCustom generated successfully!");
         }

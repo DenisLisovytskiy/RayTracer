@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 using Raytracer.TextInterfacing;
+using Raytracer.vectorsAndOthersforNow;
 
 namespace Raytracer.Outputs
 {
@@ -41,19 +42,16 @@ namespace Raytracer.Outputs
         {
             for (int i = 0; i < image.height; i++)
             {
-            ProgressReporting.ProgressMessage(image.height - i);
                 for (int j = 0; j < image.width; j++)
                 {
-                    var r = (double)j / (image.width - 1);
-                    var g = (double)i / (image.height - 1);
-                    var b = 0.0;
+                    // Normalize pixel coordinates to [0,1] range
+                    Color pixelColor = new Color((double)i / (image.width - 1), (double)j / (image.height - 1), 0);
 
-                    int ir = (int)(255.999 * r);
-                    int ig = (int)(255.999 * g);
-                    int ib = (int)(255.999 * b);
+                    // Output the color in [0,255] format
+                    pixelColor.WriteColor(writer, pixelColor);
 
-                    writer.WriteLine($"{ir} {ig} {ib}");
                 }
+                ProgressReporting.ProgressMessage(image.height - i - 1);
             }
             ProgressReporting.DoneMessage();
         }
@@ -71,5 +69,6 @@ namespace Raytracer.Outputs
         {
             writer.Close();
         }
+
     }
 }
