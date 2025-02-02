@@ -14,6 +14,7 @@ namespace Raytracer.Interfacing
             int w, h;
             Console.WriteLine("Please input the dimensions of the image you'd like to render: [width] [height]");
             var input = Console.ReadLine();
+            input.TrimEnd();
             string[] parts = input.Split(' ');
 
             if (2 == parts.Length)
@@ -32,13 +33,31 @@ namespace Raytracer.Interfacing
         public static string GetName()
         {
             Console.WriteLine("Generating image...");
-            Console.WriteLine("Please specify output file name:");
+            Console.WriteLine("Please specify output file name(just name, no extension):");
             string? name = Console.ReadLine();
             if (name == null)
             {
                 name = "default";
             }
             return name;
+        }
+
+        public static bool WantJpeg()
+        {
+            while (true)
+            {
+                Console.WriteLine("Would you like to also get a .jpg file?\n" +
+                    "(1- yes, 2-no)\n" +
+                    "(.ppm file is always generated)");
+                ConsoleKeyInfo key = Console.ReadKey(true);
+
+                if (key.KeyChar == '1')
+                    return true;
+                else if (key.KeyChar == '2')
+                    return false;
+
+                Console.WriteLine("Your input was invalid please try again!");
+            }
         }
     }
 }

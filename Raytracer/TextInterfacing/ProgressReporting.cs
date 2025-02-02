@@ -13,6 +13,7 @@ namespace Raytracer.TextInterfacing
             Console.WriteLine("ImageCustom generated successfully!");
         }
 
+        //no longer used
         public static void ProgressMessage(int linesRemaining)
         {
             Console.Clear();

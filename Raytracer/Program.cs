@@ -18,7 +18,11 @@ namespace Raytracer
             {
                 writer.GenerateImage(image);
             }
-            
+            if (InputForms.WantJpeg())
+            {
+                JPGWriter jpegWriter = new(name);
+                jpegWriter.ConvertToJPG();
+            }
         }
     }
 }
