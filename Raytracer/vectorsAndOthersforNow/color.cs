@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Raytracer.vectorsAndOthersforNow
 {
-    public class Color : Vec3
+    public class MyColor : Vec3
     {
-        public Color(double r, double g, double b) : base(r, g, b) { }
+        public MyColor(double r, double g, double b) : base(r, g, b) { }
 
-        public void WriteColor(TextWriter output, Color pixelColor)
+        public void WriteColor(TextWriter output, MyColor pixelColor)
         {
             // Extract RGB values
             double r = pixelColor.X;

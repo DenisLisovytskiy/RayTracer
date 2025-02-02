@@ -39,7 +39,7 @@ namespace Raytracer.Outputs
                     for (int i = 0; i < image.width; i++)
                     {
                         // Normalize pixel coordinates to [0,1] range
-                        vectorsAndOthersforNow.Color pixelColor = new vectorsAndOthersforNow.Color((double)i / (image.width - 1), (double)j / (image.height - 1), 0);
+                        vectorsAndOthersforNow.MyColor pixelColor = new vectorsAndOthersforNow.MyColor((double)i / (image.width - 1), (double)j / (image.height - 1), 0);
 
                         // Convert from [0,1] to [0,255]
                         int r = (int)(255.999 * Math.Clamp(pixelColor.X, 0, 1));

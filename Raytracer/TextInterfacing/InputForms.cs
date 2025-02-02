@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Raytracer.Outputs;
 
-namespace Raytracer.Interfacing
+namespace Raytracer.TextInterfacing
 {
     internal class InputForms
     {

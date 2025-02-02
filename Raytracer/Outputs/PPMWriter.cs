@@ -40,12 +40,12 @@ namespace Raytracer.Outputs
 
         public void PutPixels(ImageCustom image)
         {
-            for (int i = 0; i < image.height; i++)
+            for (int j = 0; j < image.height; j++)
             {
-                for (int j = 0; j < image.width; j++)
+                for (int i = 0; i < image.width; i++)
                 {
                     // Normalize pixel coordinates to [0,1] range
-                   Color pixelColor = new Color((double)j / (image.width - 1), (double)i / (image.height - 1), 0);
+                   MyColor pixelColor = new MyColor((double)i / (image.width - 1), (double)j / (image.height - 1), 0);
 
                     // Output the color in [0,255] format
                     pixelColor.WriteColor(writer, pixelColor);
