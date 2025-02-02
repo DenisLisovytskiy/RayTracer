@@ -6,4 +6,6 @@ add jpeg support
  
 image is a bit diferent 
 color positions are reversed 
-find indexing errors
+
+-----TO ASK
+casting/inhertance - other approaches

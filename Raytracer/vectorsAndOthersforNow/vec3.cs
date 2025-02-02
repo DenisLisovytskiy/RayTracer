@@ -1,9 +1,9 @@
-﻿using System;
+﻿global using Point3 = Raytracer.vectorsAndOthersforNow.Vec3;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace Raytracer.vectorsAndOthersforNow
 {
 
@@ -81,9 +81,10 @@ namespace Raytracer.vectorsAndOthersforNow
     }
 
     // Alias for Vec3 to represent a point
-    public class Point3 : Vec3
-    {
-        public Point3(double x, double y, double z) : base(x, y, z) { }
-    }
+    //public class Point3 : Vec3
+    //{
+    //    public Point3(double x, double y, double z) : base(x, y, z) { }
+    //}
+
 
 }
