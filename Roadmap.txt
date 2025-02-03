@@ -1,11 +1,6 @@
 -----TO DO
 
-add jpeg support
-
 -----Known Issues
- 
-image is a bit diferent 
-color positions are reversed 
 
 -----TO ASK
 casting/inhertance - other approaches

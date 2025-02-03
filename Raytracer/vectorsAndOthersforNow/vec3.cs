@@ -1,4 +1,5 @@
 ﻿global using Point3 = Raytracer.vectorsAndOthersforNow.Vec3;
+global using ColorV2 = Raytracer.vectorsAndOthersforNow.Vec3;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,6 +79,23 @@ namespace Raytracer.vectorsAndOthersforNow
         public static Vec3 UnitVector(Vec3 v) => v / v.Length();
 
         public override string ToString() => $"{E[0]} {E[1]} {E[2]}";
+
+
+        //for the color application of Vec3
+        public void WriteColor(TextWriter output, ColorV2 pixelColor)
+        {
+            // Extract RGB values
+            double ray = pixelColor.X;
+            double g = pixelColor.Y;
+            double b = pixelColor.Z;
+
+            // Convert from [0,1] to [0,255] and ensure valid range
+            int rByte = (int)(255.999 * Math.Clamp(ray, 0, 1));
+            int gByte = (int)(255.999 * Math.Clamp(g, 0, 1));
+            int bByte = (int)(255.999 * Math.Clamp(b, 0, 1));
+
+            output.WriteLine($"{rByte} {gByte} {bByte}");
+        }
     }
 
     // Alias for Vec3 to represent a point
