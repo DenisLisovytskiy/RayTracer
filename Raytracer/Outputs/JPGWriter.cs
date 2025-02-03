@@ -7,6 +7,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 using Raytracer.vectorsAndOthersforNow;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Raytracer.Outputs
 {
@@ -31,6 +32,12 @@ namespace Raytracer.Outputs
         /// <param name="image"></param>
         public void GenerateJPG(ImageCustom image)
         {
+            //error checking for debugging
+            if (image.width <= 0 || image.height <= 0)
+            {
+                throw new InvalidOperationException("Invalid height or width");
+            }
+
             // Bitmaps need to be properly disposed of!
             using (Bitmap bitmap = new Bitmap(image.width, image.height))
             {
@@ -75,21 +82,27 @@ namespace Raytracer.Outputs
 
                 reader.ReadLine(); // Skip the max color value line
 
-                Bitmap bitmap = new Bitmap(width, height);
-
-                for (int y = 0; y < height; y++)
+                //error checking for debugging
+                if (width <= 0 || height <= 0)
                 {
-                    for (int x = 0; x < width; x++)
-                    {
-                        string[] pixelData = reader.ReadLine().Split(' ');
-                        int ray = int.Parse(pixelData[0]);
-                        int g = int.Parse(pixelData[1]);
-                        int b = int.Parse(pixelData[2]);
-                        bitmap.SetPixel(x, y, Color.FromArgb(ray, g, b));
-                    }
+                    throw new InvalidOperationException("Invalid height or width");
                 }
+                using (Bitmap bitmap = new Bitmap(width, height))
+                {
 
-                SaveJPG(bitmap);
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+                            string[] pixelData = reader.ReadLine().Split(' ');
+                            int ray = int.Parse(pixelData[0]);
+                            int g = int.Parse(pixelData[1]);
+                            int b = int.Parse(pixelData[2]);
+                            bitmap.SetPixel(x, y, Color.FromArgb(ray, g, b));
+                        }
+                    }
+                    SaveJPG(bitmap);
+                }
             }
         }
 
