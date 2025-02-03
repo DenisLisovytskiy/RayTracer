@@ -19,5 +19,10 @@ namespace Raytracer.TextInterfacing
             Console.Clear();
             Console.WriteLine($"Scanlines remaining: {linesRemaining}\n");
         }
+
+        public static void ExceptionMessage(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

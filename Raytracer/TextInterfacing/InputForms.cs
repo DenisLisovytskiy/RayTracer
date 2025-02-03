@@ -30,6 +30,25 @@ namespace Raytracer.TextInterfacing
             return Tuple.Create(w, h);
         }
 
+        public static int GetWidth()
+        {
+            Console.WriteLine("Please input the width of the image you'd like to render: (ratio is 16/9)");
+            string input = Console.ReadLine();
+            input.TrimEnd();
+
+            int number;
+            if (int.TryParse(input, out number))
+            {
+                return number;
+            }
+            else
+            {
+                Console.WriteLine("Invalid input, will use defaults");
+                return 0;
+            }
+        }
+
+
         public static string GetName()
         {
             Console.WriteLine("Generating image...");
