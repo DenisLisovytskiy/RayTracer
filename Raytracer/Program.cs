@@ -1,5 +1,6 @@
 ﻿//#define UpTo3
 #define From4
+#define chapter5
 using static System.Net.Mime.MediaTypeNames;
 using Raytracer.Outputs;
 using System.Xml.Linq;
@@ -13,8 +14,35 @@ namespace Raytracer
 {
     internal class Program
     {
+
+#if chapter5
+
+        //using vector calulus calculate whether a ray hits a sphere
+        //by hits we accept 1 or 2 hits (going through the sphere or being tangent to it)
+        static bool HitSphere(Point3 center, double radius, Ray ray)
+        {
+            Vec3 oc = center - ray.Origin;
+            var a = Vec3.Dot(ray.Direction, ray.Direction);
+            var b = -2.0 * Vec3.Dot(ray.Direction, oc);
+            var c = Vec3.Dot(oc, oc) - radius * radius;
+            var delta = b * b - 4 * a * c;
+            //if delta >= 0 means we have a solution of the equation so we get a hit
+            return (delta >= 0);
+        }
+
+
+#endif
         public static MyColor RayColor(Ray _ray)
         {
+
+#if chapter5
+            Point3 p3 = new Point3(0, 0, -1);
+            if (HitSphere(p3, 0.5, _ray))
+            {
+                return new MyColor(1, 0, 0);
+            }
+#endif
+
             Vec3 unitDirection = Vec3.UnitVector(_ray.Direction);
             double a = 0.5 * (unitDirection.Y + 1.0);
 
@@ -107,6 +135,7 @@ namespace Raytracer
                 jpegWriter.ConvertToJPG();
             }
 #endif
+
 
         }
     }
