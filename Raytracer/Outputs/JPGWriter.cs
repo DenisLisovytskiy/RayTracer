@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
+using Raytracer.vectorsAndOthersforNow;
 
 namespace Raytracer.Outputs
 {
@@ -39,15 +40,15 @@ namespace Raytracer.Outputs
                     for (int i = 0; i < image.width; i++)
                     {
                         // Normalize pixel coordinates to [0,1] range
-                        vectorsAndOthersforNow.MyColor pixelColor = new vectorsAndOthersforNow.MyColor((double)i / (image.width - 1), (double)j / (image.height - 1), 0);
+                        ColorV2 pixelColor = new ColorV2((double)i / (image.width - 1), (double)j / (image.height - 1), 0);
 
                         // Convert from [0,1] to [0,255]
-                        int r = (int)(255.999 * Math.Clamp(pixelColor.X, 0, 1));
+                        int ray = (int)(255.999 * Math.Clamp(pixelColor.X, 0, 1));
                         int g = (int)(255.999 * Math.Clamp(pixelColor.Y, 0, 1));
                         int b = (int)(255.999 * Math.Clamp(pixelColor.Z, 0, 1));
 
                         // Set pixel in Bitmap
-                        bitmap.SetPixel(i, j, System.Drawing.Color.FromArgb(r, g, b));
+                        bitmap.SetPixel(i, j, System.Drawing.Color.FromArgb(ray, g, b));
                     }
                 }
 
@@ -81,10 +82,10 @@ namespace Raytracer.Outputs
                     for (int x = 0; x < width; x++)
                     {
                         string[] pixelData = reader.ReadLine().Split(' ');
-                        int r = int.Parse(pixelData[0]);
+                        int ray = int.Parse(pixelData[0]);
                         int g = int.Parse(pixelData[1]);
                         int b = int.Parse(pixelData[2]);
-                        bitmap.SetPixel(x, y, Color.FromArgb(r, g, b));
+                        bitmap.SetPixel(x, y, Color.FromArgb(ray, g, b));
                     }
                 }
 

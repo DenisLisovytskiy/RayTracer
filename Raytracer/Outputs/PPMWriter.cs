@@ -45,7 +45,7 @@ namespace Raytracer.Outputs
                 for (int i = 0; i < image.width; i++)
                 {
                     // Normalize pixel coordinates to [0,1] range
-                   MyColor pixelColor = new MyColor((double)i / (image.width - 1), (double)j / (image.height - 1), 0);
+                   ColorV2 pixelColor = new ColorV2((double)i / (image.width - 1), (double)j / (image.height - 1), 0);
 
                     // Output the color in [0,255] format
                     pixelColor.WriteColor(writer, pixelColor);
