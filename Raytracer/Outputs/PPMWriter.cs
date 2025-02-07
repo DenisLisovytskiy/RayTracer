@@ -52,7 +52,7 @@ namespace Raytracer.Outputs
 
                 }
             }
-            ProgressReporting.DoneMessage();
+            ProgressReporting.DoneMessage("No data");
         }
 
         public void GenerateImage(ImageCustom image)
