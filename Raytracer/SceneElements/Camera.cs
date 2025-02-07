@@ -65,10 +65,11 @@ namespace Raytracer.SceneElements
             streamWriter.Close();
             if (InputForms.WantJpeg())
             {
-                JPGWriter jpegWriter = new(name);
+                //JPGWriter jpegWriter = new(name);
                 try
                 {
-                    jpegWriter.ConvertToJPG();
+                    //jpegWriter.ConvertToJPG();
+                    JPGWriter.ConvertToJPG(name);
                 }
                 catch(Exception e)
                 {
