@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing.Text;
 using System.Linq;
 using System.Text;
@@ -21,20 +22,26 @@ namespace Raytracer.SceneElements
         private Vec3 pixelDeltaU; // Offset to pixel to the right
         private Vec3 pixelDeltaV; // Offset to pixel below
 
-
+        public Stopwatch? stopwatch;
 
         public void Render(IHittable world)
         {
-
+            if (stopwatch != null)
+                stopwatch.Stop();
             int userWidth = InputForms.GetWidth();
-            if(userWidth >=1)
+            if (stopwatch != null)
+                stopwatch.Start();
+            if (userWidth >=1)
             {
                 this.imageWidth = userWidth;
             }
             
             Initialize();
-            
+            if (stopwatch != null)
+                stopwatch.Stop();
             string name = InputForms.GetName();
+            if (stopwatch != null)
+                stopwatch.Start();
             StreamWriter streamWriter = new StreamWriter(name + ".ppm"); // c# neccesary to save the file
 
             streamWriter.WriteLine("P3");
@@ -59,7 +66,15 @@ namespace Raytracer.SceneElements
 
                 }
             }
-            ProgressReporting.DoneMessage();
+            if (stopwatch != null)
+            {
+                stopwatch.Stop();
+                ProgressReporting.DoneMessage($"{stopwatch.ElapsedMilliseconds}");
+            }
+            else
+            {
+                ProgressReporting.DoneMessage("No data");
+            }
 
             streamWriter.Flush();
             streamWriter.Close();

@@ -8,9 +8,10 @@ namespace Raytracer.TextInterfacing
 {
     public class ProgressReporting
     {
-        public static void DoneMessage()    
+        public static void DoneMessage(string elapsedTime)    
         {
             Console.WriteLine("ImageCustom generated successfully!");
+            Console.WriteLine($"Operation took: {elapsedTime}ms");
         }
 
         //no longer used
