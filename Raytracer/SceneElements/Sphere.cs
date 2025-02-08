@@ -15,9 +15,8 @@ namespace Raytracer.SceneElements
             Radius = Math.Max(0, radius);
         }
 
-        public bool Hit(Ray ray, Interval rayT, out HitRecord record)
+        public bool Hit(Ray ray, Interval rayT, ref HitRecord record)
         {
-            record = new HitRecord();
             Vec3 oc = Center - ray.Origin;
             double a = ray.Direction.LengthSquared();
             double h = Vec3.Dot(ray.Direction, oc);
@@ -30,7 +29,7 @@ namespace Raytracer.SceneElements
             }
 
             double sqrtd = Math.Sqrt(delta);
-            //find nearest acceptable root
+            // Find the nearest acceptable root
             double root = (h - sqrtd) / a;
             if (!rayT.Surrounds(root))
             {
@@ -41,10 +40,11 @@ namespace Raytracer.SceneElements
                 }
             }
 
+            // Assign values directly to the struct instead of reinitializing
             record.T = root;
             record.P = ray.At(record.T);
             Vec3 outwardNormal = (record.P - Center) / Radius;
-            record.setFaceNormal(ray, outwardNormal);
+            record.SetFaceNormal(ray, outwardNormal);
 
             return true;
         }

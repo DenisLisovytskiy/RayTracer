@@ -1,35 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Raytracer.vectorsAndOthersforNow;
 
 namespace Raytracer.SceneElements
 {
-    public class HitRecord
+    public struct HitRecord
     {
         public Point3 P { get; set; }
-        public Point3 Normal { get; set; }
+        public Point3 Normal { get; private set; }
         public double T { get; set; }
-        public bool frontFace { get; set; }
+        public bool FrontFace { get; private set; }
 
-        public void setFaceNormal(Ray ray, Vec3 outwardNormal)
+        public HitRecord(Point3 p, Point3 normal, double t, bool frontFace)
         {
-            frontFace = Vec3.Dot(ray.Direction, outwardNormal) < 0;
-            Normal = frontFace? outwardNormal : - outwardNormal;
+            P = p;
+            Normal = normal;
+            T = t;
+            FrontFace = frontFace;
         }
 
-        public HitRecord()
+        public void SetFaceNormal(in Ray ray, in Vec3 outwardNormal)
         {
-            P = new Point3(0, 0, 0);
-            Normal = new Point3(0, 0, 0);
-            T = 0;
+            FrontFace = Vec3.Dot(ray.Direction, outwardNormal) < 0;
+            Normal = FrontFace ? outwardNormal : -outwardNormal;
         }
     }
 
     public interface IHittable
     {
-        bool Hit(Ray ray, Interval rayT, out HitRecord record);
+        bool Hit(Ray ray, Interval rayT, ref HitRecord record);
     }
 }

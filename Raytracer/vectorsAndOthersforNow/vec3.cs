@@ -1,6 +1,7 @@
 ﻿// only one can be created at a time, used to check the difference in speed
-//#define structs 
-#define classes 
+
+#define structs 
+//#define classes 
 
 global using Point3 = Raytracer.vectorsAndOthersforNow.Vec3;
 global using ColorV2 = Raytracer.vectorsAndOthersforNow.Vec3;
@@ -11,6 +12,10 @@ using System.IO;
 namespace Raytracer.vectorsAndOthersforNow
 {
 #if structs
+    public static class ColorUtils
+    {
+        public static readonly Interval Intensity = new Interval(0.000, 0.999);
+    }
     public struct Vec3
     {
         public double X, Y, Z;
@@ -79,12 +84,18 @@ namespace Raytracer.vectorsAndOthersforNow
 
         public void WriteColor(TextWriter output, ColorV2 pixelColor)
         {
-            int rByte = (int)(255.999 * Math.Clamp(pixelColor.X, 0, 1));
-            int gByte = (int)(255.999 * Math.Clamp(pixelColor.Y, 0, 1));
-            int bByte = (int)(255.999 * Math.Clamp(pixelColor.Z, 0, 1));
+            double r = ColorUtils.Intensity.Clamp(pixelColor.X);
+            double g = ColorUtils.Intensity.Clamp(pixelColor.Y);
+            double b = ColorUtils.Intensity.Clamp(pixelColor.Z);
+
+            int rByte = (int)(256 * r);
+            int gByte = (int)(256 * g);
+            int bByte = (int)(256 * b);
 
             output.WriteLine($"{rByte} {gByte} {bByte}");
         }
+
+
     }
 #endif
 #if classes
@@ -162,20 +173,18 @@ namespace Raytracer.vectorsAndOthersforNow
 
 
      //for the color application of Vec3
-     public void WriteColor(TextWriter output, ColorV2 pixelColor)
-     {
-         // Extract RGB values
-         double ray = pixelColor.X;
-         double g = pixelColor.Y;
-         double b = pixelColor.Z;
+    public void WriteColor(TextWriter output, ColorV2 pixelColor)
+        {
+            double r = ColorUtils.Intensity.Clamp(pixelColor.X);
+            double g = ColorUtils.Intensity.Clamp(pixelColor.Y);
+            double b = ColorUtils.Intensity.Clamp(pixelColor.Z);
 
-         // Convert from [0,1] to [0,255] and ensure valid range
-         int rByte = (int)(255.999 * Math.Clamp(ray, 0, 1));
-         int gByte = (int)(255.999 * Math.Clamp(g, 0, 1));
-         int bByte = (int)(255.999 * Math.Clamp(b, 0, 1));
+            int rByte = (int)(256 * r);
+            int gByte = (int)(256 * g);
+            int bByte = (int)(256 * b);
 
-         output.WriteLine($"{rByte} {gByte} {bByte}");
-     }
+            output.WriteLine($"{rByte} {gByte} {bByte}");
+        }
  }
 #endif
 }

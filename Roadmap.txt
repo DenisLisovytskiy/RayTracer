@@ -2,5 +2,9 @@
 
 -----Known Issues
 
+executing: pixelColor += RayColor(r, world); (camera, line 76)
+causes huuge time consumption
+It was tested that thats the thing that consumes so much time
+
 -----TO ASK
 casting/inhertance - other approaches
