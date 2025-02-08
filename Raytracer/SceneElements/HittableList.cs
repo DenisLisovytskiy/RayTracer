@@ -7,8 +7,8 @@ namespace Raytracer.SceneElements
 {
     public class HittableList : IHittable
     {
-        //simplification of: = new List<IHittable>();
-        public List<IHittable> Objects { get; } = [];
+        // Using C# 9.0+ shorthand initialization for an empty list
+        public List<IHittable> Objects { get; } = new();
 
         public HittableList() { }
 
@@ -27,16 +27,16 @@ namespace Raytracer.SceneElements
             Objects.Add(obj);
         }
 
-        public bool Hit(Ray ray, Interval rayT, out HitRecord record)
+        public bool Hit(Ray ray, Interval rayT, ref HitRecord record)
         {
-            record = new HitRecord();
-            HitRecord tmpRecord;
             bool hitAnything = false;
             double closestSoFar = rayT.Max;
 
             foreach (var obj in Objects)
             {
-                if (obj.Hit(ray, new Interval(rayT.Min, closestSoFar), out tmpRecord))
+                HitRecord tmpRecord = default; // Structs need explicit initialization
+
+                if (obj.Hit(ray, new Interval(rayT.Min, closestSoFar), ref tmpRecord))
                 {
                     hitAnything = true;
                     closestSoFar = tmpRecord.T;
@@ -48,3 +48,5 @@ namespace Raytracer.SceneElements
         }
     }
 }
+
+

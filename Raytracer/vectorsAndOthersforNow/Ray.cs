@@ -1,7 +1,7 @@
 ﻿// only one can be created at a time, used to check the difference in speed
 
-//#define structs 
-#define classes 
+#define structs 
+//#define classes 
 using System;
 
 namespace Raytracer.vectorsAndOthersforNow
@@ -34,6 +34,7 @@ namespace Raytracer.vectorsAndOthersforNow
         }
     }
 #endif
+
 #if classes
     public class Ray
     {
