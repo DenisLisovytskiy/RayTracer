@@ -32,7 +32,7 @@ namespace Raytracer
                 aspectRatio = 16.0 / 9.0,
                 imageWidth = 400,
                 stopwatch = _stopwatch,
-                samplesPerPixel = 10
+                samplesPerPixel = 100
             };
 
             camera.Render(world);
