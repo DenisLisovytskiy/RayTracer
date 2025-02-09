@@ -23,6 +23,15 @@ namespace Raytracer
             //World            
             HittableList world = new HittableList();
 
+            /*
+            double R = Math.Cos(double.Pi / 4);
+
+            var materialLeft = new Lambertian(new ColorV2(0, 0, 1));
+            var materialRight = new Lambertian(new ColorV2(1, 0, 0));
+
+            world.Add(new Sphere(new Point3(-R, 0, -1), R, materialLeft));
+            world.Add(new Sphere(new Point3(R, 0, -1), R, materialRight));
+            */
             var materialGround = new Lambertian(new ColorV2(0.8, 0.8, 0.0));
             var materialCenter = new Lambertian(new ColorV2(0.1, 0.2, 0.5));
             var materialLeft = new Dielectric(1.5);// refractive index of glass is ~1.5
@@ -36,7 +45,6 @@ namespace Raytracer
             world.Add(new Sphere(new Point3(-1.0, 0.0, -1.0), 0.4, materialBubble));
             world.Add(new Sphere(new Point3(1.0, 0.0, -1.0), 0.5, materialRight));
 
-
             Camera camera = new()
             {
                 aspectRatio = 16.0 / 9.0,
@@ -45,7 +53,14 @@ namespace Raytracer
                 samplesPerPixel = 10, // increase by one -> one more operation for every pixel
                                       // (even more, beacause it is a complex computation)
                                       // basically "how strong you want your antilaiasing" 
-                maxDepth = 10 // used to determine how far recursion can go in RayColor
+                maxDepth = 10, // used to determine how far recursion can go in RayColor
+                
+                vfov = 20, // field of view, basicallly zooming in and out 
+
+                lookFrom = new Point3(-2,2,1),
+                lookAt = new Point3(0, 0, -1),
+                vup = new Vec3(0,1,0)
+
             };
 
             camera.Render(world);
