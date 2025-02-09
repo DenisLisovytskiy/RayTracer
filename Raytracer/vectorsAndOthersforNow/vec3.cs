@@ -85,6 +85,10 @@ namespace Raytracer.vectorsAndOthersforNow
         public static Vec3 operator *(double t, Vec3 v) => v.Multiply(t);
         public static Vec3 operator /(Vec3 v, double t) => v.Divide(t);
         public static Vec3 operator -(Vec3 v) => v.Negate();
+        public static Vec3 operator *(Vec3 u, Vec3 v)
+        { 
+            return new Vec3(u.X* v.X, u.Y* v.Y, u.Z* v.Z);
+        }
 
         // Dot Product
         public static double Dot(Vec3 u, Vec3 v) => u.X * v.X + u.Y * v.Y + u.Z * v.Z;
@@ -122,6 +126,17 @@ namespace Raytracer.vectorsAndOthersforNow
         public static double LinearToGamma(double linearComponent)
         {
             return linearComponent > 0 ? Math.Sqrt(linearComponent) : 0;
+        }
+
+        public bool NearZero()
+        {
+            var s = 1e-8;
+            return (Math.Abs(X) < s) && (Math.Abs(Y)< s) && (Math.Abs(Z) < s);
+        }
+
+        public static Vec3 Reflect(Vec3 v, Vec3 n)
+        {
+            return v - 2 * Vec3.Dot(v, n) * n;
         }
 
         // for eventual debugging
