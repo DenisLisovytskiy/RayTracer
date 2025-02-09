@@ -54,8 +54,9 @@ namespace Raytracer.TextInterfacing
             Console.WriteLine("Generating image...");
             Console.WriteLine("Please specify output file name(just name, no extension):");
             string? name = Console.ReadLine();
-            if (name == null)
+            if (name == null || name == "")
             {
+                Console.WriteLine("Invalid input, will use \"default\"");
                 name = "default";
             }
             return name;

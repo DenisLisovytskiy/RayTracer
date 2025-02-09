@@ -23,46 +23,73 @@ namespace Raytracer
             //World            
             HittableList world = new HittableList();
 
-            /*
-            double R = Math.Cos(double.Pi / 4);
+            var groundMaterial = new Lambertian(new ColorV2(0.5, 0.5, 0.5));
+            world.Add(new Sphere(new Point3(0, -1000, 0), 1000, groundMaterial));
 
-            var materialLeft = new Lambertian(new ColorV2(0, 0, 1));
-            var materialRight = new Lambertian(new ColorV2(1, 0, 0));
+            for (int a = -11; a < 11; a++)
+            {
+                for (int b = -11; b < 11; b++)
+                {
+                    double chooseMat = UtilityFunctions.RandomDouble();
+                    Point3 center = new Point3(a + 0.9 * UtilityFunctions.RandomDouble(), 0.2, b + 0.9 * UtilityFunctions.RandomDouble());
 
-            world.Add(new Sphere(new Point3(-R, 0, -1), R, materialLeft));
-            world.Add(new Sphere(new Point3(R, 0, -1), R, materialRight));
-            */
-            var materialGround = new Lambertian(new ColorV2(0.8, 0.8, 0.0));
-            var materialCenter = new Lambertian(new ColorV2(0.1, 0.2, 0.5));
-            var materialLeft = new Dielectric(1.5);// refractive index of glass is ~1.5
-            var materialBubble = new Dielectric(1.00 / 1.50); // sphere of air inside a glass sphere
-            //var materialLeft = new Dielectric(1.00/1.33);// sphere of air in water
-            var materialRight = new Metal(new ColorV2(0.8, 0.6, 0.2), 1.0);
+                    if ((center - new Point3(4, 0.2, 0)).Length() > 0.9)
+                    {
+                        IMaterial sphereMaterial;
 
-            world.Add(new Sphere(new Point3(0.0, -100.5, -1.0), 100.0, materialGround));
-            world.Add(new Sphere(new Point3(0.0, 0.0, -1.2), 0.5, materialCenter));
-            world.Add(new Sphere(new Point3(-1.0, 0.0, -1.0), 0.5, materialLeft));
-            world.Add(new Sphere(new Point3(-1.0, 0.0, -1.0), 0.4, materialBubble));
-            world.Add(new Sphere(new Point3(1.0, 0.0, -1.0), 0.5, materialRight));
+                        if (chooseMat < 0.8)
+                        {
+                            // diffuse
+                            ColorV2 albedo = ColorV2.Random() * ColorV2.Random();
+                            sphereMaterial = new Lambertian(albedo);
+                            world.Add(new Sphere(center, 0.2, sphereMaterial));
+                        }
+                        else if (chooseMat < 0.95)
+                        {
+                            // metal
+                            ColorV2 albedo = ColorV2.Random(0.5, 1.0);
+                            double fuzz = UtilityFunctions.RandomDouble(0, 0.5);
+                            sphereMaterial = new Metal(albedo, fuzz);
+                            world.Add(new Sphere(center, 0.2, sphereMaterial));
+                        }
+                        else
+                        {
+                            // glass
+                            sphereMaterial = new Dielectric(1.5);
+                            world.Add(new Sphere(center, 0.2, sphereMaterial));
+                        }
+                    }
+                }
+            }
+
+            var material1 = new Dielectric(1.5);
+            world.Add(new Sphere(new Point3(0, 1, 0), 1.0, material1));
+
+            var material2 = new Lambertian(new ColorV2(0.4, 0.2, 0.1));
+            world.Add(new Sphere(new Point3(-4, 1, 0), 1.0, material2));
+
+            var material3 = new Metal(new ColorV2(0.7, 0.6, 0.5), 0.0);
+            world.Add(new Sphere(new Point3(4, 1, 0), 1.0, material3));
+
 
             Camera camera = new()
             {
                 aspectRatio = 16.0 / 9.0,
                 imageWidth = 400,
                 stopwatch = _stopwatch,
-                samplesPerPixel = 10, // increase by one -> one more operation for every pixel
+                samplesPerPixel = 30, // increase by one -> one more operation for every pixel
                                       // (even more, beacause it is a complex computation)
                                       // basically "how strong you want your antilaiasing" 
-                maxDepth = 10, // used to determine how far recursion can go in RayColor
+                maxDepth = 15, // used to determine how far recursion can go in RayColor
 
                 vfov = 20, // field of view, basicallly zooming in and out 
 
-                lookFrom = new Point3(-2, 2, 1),
-                lookAt = new Point3(0, 0, -1),
+                lookFrom = new Point3(13, 2, 3),
+                lookAt = new Point3(0, 0, 0),
                 vup = new Vec3(0, 1, 0),
 
-                defocusAngle = 10.0,
-                focusDistance = 3.4
+                defocusAngle = 0.6,
+                focusDistance = 10.0
             };
 
             camera.Render(world);

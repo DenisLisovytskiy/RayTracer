@@ -67,35 +67,44 @@ namespace Raytracer.SceneElements
             streamWriter.WriteLine($"{imageWidth} {imageHeight}");
             streamWriter.WriteLine("255");
 
-            //loops
-            for (int j = 0; j < imageHeight; j++)
+            ColorV2[] imageBuffer = new ColorV2[imageWidth * imageHeight];
+            int numThreads = Environment.ProcessorCount; // Use all available CPU cores
+            int rowsPerTask = imageHeight / numThreads; // Divide work among tasks
+            Task[] tasks = new Task[numThreads];
+
+            // Launch multiple tasks for rendering
+            for (int t = 0; t < numThreads; t++)
             {
-                for (int i = 0; i < imageWidth; i++)
+                int startRow = t * rowsPerTask;
+                int endRow = (t == numThreads - 1) ? imageHeight : startRow + rowsPerTask;
+
+                tasks[t] = Task.Run(() =>
                 {
-                    /*
-                    Vec3 pixelCenter = pixel00Location + (i * pixelDeltaU) + (j * pixelDeltaV);
-                    Vec3 rayDirection = pixelCenter - cameraCenter;
-                    Ray _ray = new(cameraCenter, rayDirection);
-
-
-                    // Normalize pixel coordinates to [0,1] range
-                    ColorV2 pixelColor = RayColor(_ray, world);
-
-                     */
-                    ColorV2 pixelColor = new ColorV2(0, 0, 0);
-
-                    // Multi-sampling per pixel
-                    Ray r = new Ray();
-                    for (int sample = 0; sample < samplesPerPixel; sample++)
+                    for (int j = startRow; j < endRow; j++)
                     {
-                        r = GetRay(i, j);
-                        pixelColor += RayColor(r, maxDepth, world);
+                        for (int i = 0; i < imageWidth; i++)
+                        {
+                            ColorV2 pixelColor = new ColorV2(0, 0, 0);
+
+                            // Multi-sampling per pixel
+                            for (int sample = 0; sample < samplesPerPixel; sample++)
+                            {
+                                Ray r = GetRay(i, j);
+                                pixelColor += RayColor(r, maxDepth, world);
+                            }
+
+                            // Store the final pixel color in the buffer
+                            imageBuffer[j * imageWidth + i] = pixelColor * pixelSamplesScale;
+                        }
                     }
+                });
+            }
 
-                    // Output the color in [0,255] format
-                    pixelColor.WriteColor(streamWriter, pixelColor * pixelSamplesScale);
+            Task.WhenAll(tasks).Wait(); // Wait for all tasks to finish
 
-                }
+            foreach (var color in imageBuffer)
+            {
+                color.WriteColor(streamWriter, color);
             }
 
             if (stopwatch != null)
