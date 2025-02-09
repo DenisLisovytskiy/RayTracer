@@ -8,14 +8,18 @@ global using ColorV2 = Raytracer.vectorsAndOthersforNow.Vec3;
 
 using System;
 using System.IO;
+using Raytracer.Utilities;
 
 namespace Raytracer.vectorsAndOthersforNow
 {
-#if structs
+
     public static class ColorUtils
     {
         public static readonly Interval Intensity = new Interval(0.000, 0.999);
     }
+
+#if structs
+
     public struct Vec3
     {
         public double X, Y, Z;
@@ -52,8 +56,28 @@ namespace Raytracer.vectorsAndOthersforNow
 
         public double Length() => Math.Sqrt(LengthSquared());
 
+
+
         // Squared Length (avoids expensive sqrt call)
         public double LengthSquared() => X * X + Y * Y + Z * Z;
+
+        static Vec3 random()
+        {
+            return new Vec3(
+                UtilityFunctions.RandomDouble(),
+                UtilityFunctions.RandomDouble(),
+                UtilityFunctions.RandomDouble()
+            );
+        }
+
+        static Vec3 random(double min, double max)
+        {
+            return new Vec3(
+                UtilityFunctions.RandomDouble(min,max),
+                UtilityFunctions.RandomDouble(min, max),
+                UtilityFunctions.RandomDouble(min, max)
+            );
+        }
 
         public static Vec3 operator +(Vec3 u, Vec3 v) => u.Add(v);
         public static Vec3 operator -(Vec3 u, Vec3 v) => u.Subtract(v);
@@ -78,6 +102,28 @@ namespace Raytracer.vectorsAndOthersforNow
         // Unit Vector
         public static Vec3 UnitVector(Vec3 v) => v / v.Length();
 
+        public static Vec3 RandomUnitVector()
+        {
+            while (true)
+            {
+                Vec3 p = random(-1, 1);
+                double lensq = p.LengthSquared();
+                if (lensq > 1e-160 && lensq <= 1)
+                    return UnitVector(p);
+            }
+        }
+
+        public static Vec3 RandomOnHemisphere(Vec3 normal)
+        {
+            Vec3 onUnitSphere = RandomUnitVector();
+            return Dot(onUnitSphere, normal) > 0.0 ? onUnitSphere : -onUnitSphere;
+        }
+
+        public static double LinearToGamma(double linearComponent)
+        {
+            return linearComponent > 0 ? Math.Sqrt(linearComponent) : 0;
+        }
+
         // for eventual debugging
         public override string ToString() => $"{X} {Y} {Z}";
 
@@ -87,6 +133,11 @@ namespace Raytracer.vectorsAndOthersforNow
             double r = ColorUtils.Intensity.Clamp(pixelColor.X);
             double g = ColorUtils.Intensity.Clamp(pixelColor.Y);
             double b = ColorUtils.Intensity.Clamp(pixelColor.Z);
+
+            // Apply a linear to gamma transform for gamma 2
+            r = LinearToGamma(r);
+            g = LinearToGamma(g);
+            b = LinearToGamma(b);
 
             int rByte = (int)(256 * r);
             int gByte = (int)(256 * g);
