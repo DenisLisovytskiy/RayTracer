@@ -61,7 +61,7 @@ namespace Raytracer.vectorsAndOthersforNow
         // Squared Length (avoids expensive sqrt call)
         public double LengthSquared() => X * X + Y * Y + Z * Z;
 
-        static Vec3 random()
+        public static Vec3 Random()
         {
             return new Vec3(
                 UtilityFunctions.RandomDouble(),
@@ -70,10 +70,10 @@ namespace Raytracer.vectorsAndOthersforNow
             );
         }
 
-        static Vec3 random(double min, double max)
+        public static Vec3 Random(double min, double max)
         {
             return new Vec3(
-                UtilityFunctions.RandomDouble(min,max),
+                UtilityFunctions.RandomDouble(min, max),
                 UtilityFunctions.RandomDouble(min, max),
                 UtilityFunctions.RandomDouble(min, max)
             );
@@ -86,8 +86,8 @@ namespace Raytracer.vectorsAndOthersforNow
         public static Vec3 operator /(Vec3 v, double t) => v.Divide(t);
         public static Vec3 operator -(Vec3 v) => v.Negate();
         public static Vec3 operator *(Vec3 u, Vec3 v)
-        { 
-            return new Vec3(u.X* v.X, u.Y* v.Y, u.Z* v.Z);
+        {
+            return new Vec3(u.X * v.X, u.Y * v.Y, u.Z * v.Z);
         }
 
         // Dot Product
@@ -122,7 +122,7 @@ namespace Raytracer.vectorsAndOthersforNow
         {
             while (true)
             {
-                Vec3 p = random(-1, 1);
+                Vec3 p = Random(-1, 1);
                 double lensq = p.LengthSquared();
                 if (lensq > 1e-160 && lensq <= 1)
                     return UnitVector(p);
@@ -143,7 +143,7 @@ namespace Raytracer.vectorsAndOthersforNow
         public bool NearZero()
         {
             var s = 1e-8;
-            return (Math.Abs(X) < s) && (Math.Abs(Y)< s) && (Math.Abs(Z) < s);
+            return (Math.Abs(X) < s) && (Math.Abs(Y) < s) && (Math.Abs(Z) < s);
         }
 
         public static Vec3 Reflect(Vec3 v, Vec3 n)
