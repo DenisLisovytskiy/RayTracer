@@ -1,4 +1,5 @@
 ﻿using System;
+using Raytracer.Materials;
 using Raytracer.vectorsAndOthersforNow;
 
 namespace Raytracer.SceneElements
@@ -7,6 +8,7 @@ namespace Raytracer.SceneElements
     {
         public Point3 P { get; set; }
         public Point3 Normal { get; private set; }
+        public IMaterial material;
         public double T { get; set; }
         public bool FrontFace { get; private set; }
 

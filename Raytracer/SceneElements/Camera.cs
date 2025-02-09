@@ -186,9 +186,16 @@ namespace Raytracer.SceneElements
 
             if (world.Hit(ray, new Interval(0.001, double.PositiveInfinity), ref record))
             {
+                Ray scattered;
+                ColorV2 attenuation;
+                if(record.material.Scatter(ray, record, out attenuation, out scattered))
+                {
+                    return attenuation * RayColor(scattered, depth - 1, world);
+                }
+                return new ColorV2(0, 0, 0);
                 //Vec3 direction = Vec3.RandomOnHemisphere(record.Normal); //before 9.4
-                Vec3 direction = record.Normal + Vec3.RandomUnitVector();
-                return 0.9 * RayColor(new Ray(record.P, direction),depth-1, world);
+                //Vec3 direction = record.Normal + Vec3.RandomUnitVector();
+                //return 0.9 * RayColor(new Ray(record.P, direction),depth-1, world);
                 
                 // !!ATTENTION!!
                 // Changing variable above (from 0 to 1 ) determines 

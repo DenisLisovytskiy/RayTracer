@@ -1,6 +1,7 @@
 ﻿using Raytracer.SceneElements;
 using Raytracer.vectorsAndOthersforNow;
 using System;
+using Raytracer.Materials;
 
 namespace Raytracer.SceneElements
 {
@@ -8,11 +9,13 @@ namespace Raytracer.SceneElements
     {
         public Point3 Center { get; }
         public double Radius { get; }
+        private IMaterial material;
 
-        public Sphere(Point3 center, double radius)
+        public Sphere(Point3 center, double radius, IMaterial material)
         {
             Center = center;
             Radius = Math.Max(0, radius);
+            this.material = material;
         }
 
         public bool Hit(Ray ray, Interval rayT, ref HitRecord record)
@@ -45,6 +48,7 @@ namespace Raytracer.SceneElements
             record.P = ray.At(record.T);
             Vec3 outwardNormal = (record.P - Center) / Radius;
             record.SetFaceNormal(ray, outwardNormal);
+            record.material = material;
 
             return true;
         }
