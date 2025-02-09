@@ -139,6 +139,14 @@ namespace Raytracer.vectorsAndOthersforNow
             return v - 2 * Vec3.Dot(v, n) * n;
         }
 
+        public static Vec3 Refract(Vec3 u, Vec3 n, double etaIOverEtaT)
+        {
+            double cosTheta = Math.Min(Vec3.Dot(-u, n), 1.0);
+            Vec3 rayOutPerpendicular = etaIOverEtaT * (u + cosTheta * n);
+            Vec3 rayOutParallel = -Math.Sqrt(Math.Abs(1.0 - rayOutPerpendicular.LengthSquared())) * n;
+            return rayOutPerpendicular + rayOutParallel;
+        }
+
         // for eventual debugging
         public override string ToString() => $"{X} {Y} {Z}";
 
