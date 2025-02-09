@@ -198,20 +198,6 @@ namespace Raytracer.SceneElements
             return cameraCenter + (p.X * defocusDiskU) + (p.Y * defocusDiskV);
         }
 
-        //public static ColorV2 RayColor(Ray ray, IHittable world)
-        //{
-        //    HitRecord record;
-        //    if (world.Hit(ray, new Interval(0, double.PositiveInfinity), out record))
-        //    {
-        //        return 0.5 * (record.Normal + new ColorV2(1, 1, 1));
-        //    }
-
-        //    Vec3 unitDirection = Vec3.UnitVector(ray.Direction);
-        //    double a = 0.5 * (unitDirection.Y + 1.0);
-
-        //    return (1.0 - a) * new ColorV2(1.0, 1.0, 1.0) + a * new ColorV2(0.5, 0.7, 1.0);
-        //}
-
         public static ColorV2 RayColor(Ray ray, int depth, IHittable world)
         {
             // If we've exceeded the ray bounce limit, no more light is gathered.
@@ -229,15 +215,6 @@ namespace Raytracer.SceneElements
                     return attenuation * RayColor(scattered, depth - 1, world);
                 }
                 return new ColorV2(0, 0, 0);
-                //Vec3 direction = Vec3.RandomOnHemisphere(record.Normal); //before 9.4
-                //Vec3 direction = record.Normal + Vec3.RandomUnitVector();
-                //return 0.9 * RayColor(new Ray(record.P, direction),depth-1, world);
-
-                // !!ATTENTION!!
-                // Changing variable above (from 0 to 1 ) determines 
-                // brightness
-
-                //return 0.5 * (record.Normal + new ColorV2(1, 1, 1));
             }
 
             Vec3 unitDirection = Vec3.UnitVector(ray.Direction);
@@ -245,7 +222,5 @@ namespace Raytracer.SceneElements
 
             return (1.0 - a) * new ColorV2(1.0, 1.0, 1.0) + a * new ColorV2(0.5, 0.7, 1.0);
         }
-
-
     }
 }

@@ -12,7 +12,7 @@ namespace Raytracer.Materials
     struct Dielectric : IMaterial
     {
         private double refractionindex;
-        public Dielectric(double refractionIndex) 
+        public Dielectric(double refractionIndex)
         {
             this.refractionindex = refractionIndex;
         }
@@ -28,11 +28,11 @@ namespace Raytracer.Materials
         public bool Scatter(Ray rayIn, HitRecord record, out Point3 attenuation, out Ray scattered)
         {
             attenuation = new ColorV2(1.0, 1.0, 1.0);
-            double ri = record.FrontFace ? (1.0/refractionindex) : refractionindex;
+            double ri = record.FrontFace ? (1.0 / refractionindex) : refractionindex;
             Vec3 unitDirection = Vec3.UnitVector(rayIn.Direction);
 
             double cosTheta = Math.Min(Vec3.Dot(-unitDirection, record.Normal), 1.0);
-            double sinTheta = Math.Sqrt(1 - cosTheta*cosTheta);
+            double sinTheta = Math.Sqrt(1 - cosTheta * cosTheta);
 
             bool cannotRefract = ri * sinTheta > 1.0;
             Vec3 direction;

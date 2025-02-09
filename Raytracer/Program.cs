@@ -13,7 +13,7 @@ using Raytracer.Utilities;
 using Raytracer.Materials;
 
 namespace Raytracer
-{ 
+{
     internal class Program
     {
 

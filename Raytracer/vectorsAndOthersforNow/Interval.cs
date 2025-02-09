@@ -5,12 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Raytracer.vectorsAndOthersforNow
-{ 
-    // I guess that it is better to leave Interval as a class, becaause
-    // - it is not often created, unlike we got a ray per every pixel;
-    // - it is passed around a lot, which is more convenient to do with classes
-
-    public class Interval 
+{
+    public class Interval
     {
         public double Min { get; }
         public double Max { get; }
@@ -40,8 +36,8 @@ namespace Raytracer.vectorsAndOthersforNow
 
         public double Clamp(double x)
         {
-            if(x < Min) return Min;
-            if(x > Max) return Max;
+            if (x < Min) return Min;
+            if (x > Max) return Max;
             return x;
         }
 
