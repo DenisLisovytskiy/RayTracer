@@ -9,16 +9,12 @@ using System.Runtime.CompilerServices;
 using Raytracer.SceneElements;
 using System.Reflection;
 using System.Diagnostics;
+using Raytracer.Utilities;
 
 namespace Raytracer
 { 
     internal class Program
     {
-
-        double degreesToRadians(double degrees)
-        {
-            return degrees * Math.PI / 180.0;
-        }
 
         static void Main(string[] args)
         {
@@ -32,7 +28,10 @@ namespace Raytracer
                 aspectRatio = 16.0 / 9.0,
                 imageWidth = 400,
                 stopwatch = _stopwatch,
-                samplesPerPixel = 10
+                samplesPerPixel = 10, // increase by one -> one more operation for every pixel
+                                      // (even more, beacause it is a complex computation)
+                                      // basically "how strong you want your antilaiasing" 
+                maxDepth = 10 // used to determine how far recursion can go in RayColor
             };
 
             camera.Render(world);

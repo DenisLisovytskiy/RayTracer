@@ -9,6 +9,7 @@ using Raytracer.Outputs;
 using Raytracer.TextInterfacing;
 using Raytracer.vectorsAndOthersforNow;
 
+
 namespace Raytracer.SceneElements
 {
     public class Camera
@@ -16,6 +17,8 @@ namespace Raytracer.SceneElements
         public double aspectRatio = 1.0;
         public int imageWidth = 100;
         public int samplesPerPixel = 10;
+        public int maxDepth = 10;
+
         private double pixelSamplesScale;
 
         private int imageHeight; // Rendered image height
@@ -73,7 +76,7 @@ namespace Raytracer.SceneElements
                     for (int sample = 0; sample < samplesPerPixel; sample++)
                     {
                         r = GetRay(i, j);
-                        pixelColor += RayColor(r, world);
+                        pixelColor += RayColor(r,maxDepth, world);
                     }
 
                     // Output the color in [0,255] format
@@ -173,13 +176,25 @@ namespace Raytracer.SceneElements
         //    return (1.0 - a) * new ColorV2(1.0, 1.0, 1.0) + a * new ColorV2(0.5, 0.7, 1.0);
         //}
 
-        public static ColorV2 RayColor(Ray ray, IHittable world)
+        public static ColorV2 RayColor(Ray ray, int depth, IHittable world)
         {
+            // If we've exceeded the ray bounce limit, no more light is gathered.
+            if (depth <= 0)
+                return new ColorV2(0, 0, 0);
+
             HitRecord record = default; // Structs need explicit initialization
 
-            if (world.Hit(ray, new Interval(0, double.PositiveInfinity), ref record))
+            if (world.Hit(ray, new Interval(0.001, double.PositiveInfinity), ref record))
             {
-                return 0.5 * (record.Normal + new ColorV2(1, 1, 1));
+                //Vec3 direction = Vec3.RandomOnHemisphere(record.Normal); //before 9.4
+                Vec3 direction = record.Normal + Vec3.RandomUnitVector();
+                return 0.9 * RayColor(new Ray(record.P, direction),depth-1, world);
+                
+                // !!ATTENTION!!
+                // Changing variable above (from 0 to 1 ) determines 
+                // brightness
+
+                //return 0.5 * (record.Normal + new ColorV2(1, 1, 1));
             }
 
             Vec3 unitDirection = Vec3.UnitVector(ray.Direction);
