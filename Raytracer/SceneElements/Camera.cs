@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Raytracer.Outputs;
 using Raytracer.TextInterfacing;
+using Raytracer.Utilities;
 using Raytracer.vectorsAndOthersforNow;
 
 
@@ -19,6 +20,11 @@ namespace Raytracer.SceneElements
         public int samplesPerPixel = 10;
         public int maxDepth = 10;
 
+        public double vfov = 90;  // Vertical view angle (field of view)
+        public Point3 lookFrom = new Point3(0, 0, 0);   // Point camera is looking from
+        public Point3 lookAt = new Point3(0, 0, -1);  // Point camera is looking at
+        public Vec3 vup = new Vec3(0, 1, 0);     // Camera-relative "up" direction
+
         private double pixelSamplesScale;
 
         private int imageHeight; // Rendered image height
@@ -26,6 +32,7 @@ namespace Raytracer.SceneElements
         private Point3 pixel00Location; // Location of pixel 0, 0
         private Vec3 pixelDeltaU; // Offset to pixel to the right
         private Vec3 pixelDeltaV; // Offset to pixel below
+        private Vec3 u, v, w;
 
         public Stopwatch? stopwatch;
         private static readonly Random rand = new Random();
@@ -119,22 +126,31 @@ namespace Raytracer.SceneElements
             pixelSamplesScale = 1.0 / samplesPerPixel;
 
             // Camera Parameters
-            double focalLength = 1.0;
-            double viewportHeight = 2.0;
+            cameraCenter = lookFrom;
+
+            var focalLength = (lookFrom - lookAt).Length();
+
+            var theta = UtilityFunctions.DegreesToRadians(vfov);
+            var h = Math.Tan(theta/2);
+            var viewportHeight = 2 * h * focalLength;
             double viewportWidth = viewportHeight * ((double)imageWidth / imageHeight);
-            cameraCenter = new Point3(0, 0, 0);
 
-            // Viewport Edge Vectors
-            Vec3 viewportU = new Vec3(viewportWidth, 0, 0);
-            Vec3 viewportV = new Vec3(0, -viewportHeight, 0);
+            // Calculate the u,v,w unit basis vectors for the camera coordinate frame.
+            w = Vec3.UnitVector(lookFrom - lookAt);
+            u = Vec3.UnitVector(Vec3.Cross(vup, w));
+            v = Vec3.Cross(w, u);
 
-            // Pixel Delta Vectors
+            // Calculate the vectors across the horizontal and down the vertical viewport edges.
+            Vec3 viewportU = viewportWidth * u; // Vector across viewport horizontal edge
+            Vec3 viewportV = viewportHeight * -v; // Vector down viewport vertical edge
+
+            // Calculate the horizontal and vertical delta vectors from pixel to pixel
             pixelDeltaU = viewportU / imageWidth;
             pixelDeltaV = viewportV / imageHeight;
 
             // Upper Left Pixel Calculation
             Point3 viewportUpperLeft = (cameraCenter
-                                         - (new Vec3(0, 0, focalLength))
+                                         - (focalLength * w)
                                          - viewportU / 2
                                          - viewportV / 2);
             pixel00Location = (viewportUpperLeft + 0.5 * (pixelDeltaU + pixelDeltaV));
