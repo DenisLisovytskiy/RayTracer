@@ -54,13 +54,15 @@ namespace Raytracer
                                       // (even more, beacause it is a complex computation)
                                       // basically "how strong you want your antilaiasing" 
                 maxDepth = 10, // used to determine how far recursion can go in RayColor
-                
+
                 vfov = 20, // field of view, basicallly zooming in and out 
 
-                lookFrom = new Point3(-2,2,1),
+                lookFrom = new Point3(-2, 2, 1),
                 lookAt = new Point3(0, 0, -1),
-                vup = new Vec3(0,1,0)
+                vup = new Vec3(0, 1, 0),
 
+                defocusAngle = 10.0,
+                focusDistance = 3.4
             };
 
             camera.Render(world);

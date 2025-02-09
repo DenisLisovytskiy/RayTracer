@@ -25,6 +25,9 @@ namespace Raytracer.SceneElements
         public Point3 lookAt = new Point3(0, 0, -1);  // Point camera is looking at
         public Vec3 vup = new Vec3(0, 1, 0);     // Camera-relative "up" direction
 
+        public double defocusAngle = 0;// Variation angle of rays through each pixel
+        public double focusDistance = 10;// Distance from camera lookfrom point to plane of perfect focus
+
         private double pixelSamplesScale;
 
         private int imageHeight; // Rendered image height
@@ -33,6 +36,9 @@ namespace Raytracer.SceneElements
         private Vec3 pixelDeltaU; // Offset to pixel to the right
         private Vec3 pixelDeltaV; // Offset to pixel below
         private Vec3 u, v, w;
+
+        private Vec3 defocusDiskU;// Defocus disk horizontal radius
+        private Vec3 defocusDiskV;// Defocus disk vertical radius
 
         public Stopwatch? stopwatch;
         private static readonly Random rand = new Random();
@@ -44,11 +50,11 @@ namespace Raytracer.SceneElements
             int userWidth = InputForms.GetWidth();
             if (stopwatch != null)
                 stopwatch.Start();
-            if (userWidth >=1)
+            if (userWidth >= 1)
             {
                 this.imageWidth = userWidth;
             }
-            
+
             Initialize();
             if (stopwatch != null)
                 stopwatch.Stop();
@@ -83,7 +89,7 @@ namespace Raytracer.SceneElements
                     for (int sample = 0; sample < samplesPerPixel; sample++)
                     {
                         r = GetRay(i, j);
-                        pixelColor += RayColor(r,maxDepth, world);
+                        pixelColor += RayColor(r, maxDepth, world);
                     }
 
                     // Output the color in [0,255] format
@@ -112,7 +118,7 @@ namespace Raytracer.SceneElements
                     //jpegWriter.ConvertToJPG();
                     JPGWriter.ConvertToJPG(name);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     ProgressReporting.ExceptionMessage(e);
                 }
@@ -128,11 +134,9 @@ namespace Raytracer.SceneElements
             // Camera Parameters
             cameraCenter = lookFrom;
 
-            var focalLength = (lookFrom - lookAt).Length();
-
             var theta = UtilityFunctions.DegreesToRadians(vfov);
-            var h = Math.Tan(theta/2);
-            var viewportHeight = 2 * h * focalLength;
+            var h = Math.Tan(theta / 2);
+            var viewportHeight = 2 * h * focusDistance;
             double viewportWidth = viewportHeight * ((double)imageWidth / imageHeight);
 
             // Calculate the u,v,w unit basis vectors for the camera coordinate frame.
@@ -149,11 +153,13 @@ namespace Raytracer.SceneElements
             pixelDeltaV = viewportV / imageHeight;
 
             // Upper Left Pixel Calculation
-            Point3 viewportUpperLeft = (cameraCenter
-                                         - (focalLength * w)
-                                         - viewportU / 2
-                                         - viewportV / 2);
+            Vec3 viewportUpperLeft = cameraCenter - (focusDistance * w) - viewportU / 2 - viewportV / 2;
             pixel00Location = (viewportUpperLeft + 0.5 * (pixelDeltaU + pixelDeltaV));
+
+            // Calculate the camera defocus disk basis vectors.
+            double defocus_radius = focusDistance * Math.Tan(UtilityFunctions.DegreesToRadians(defocusAngle / 2));
+            defocusDiskU = u * defocus_radius;
+            defocusDiskV = v * defocus_radius;
         }
 
         private Ray GetRay(int i, int j)
@@ -163,7 +169,7 @@ namespace Raytracer.SceneElements
             Vec3 pixelSample = pixel00Location
                               + ((i + offset.X) * pixelDeltaU)
                               + ((j + offset.Y) * pixelDeltaV);
-            Vec3 rayOrigin = cameraCenter;
+            Vec3 rayOrigin = (defocusAngle <= 0) ? cameraCenter : DefocusDiskSample();
             Vec3 rayDirection = pixelSample - rayOrigin;
             return new Ray(rayOrigin, rayDirection);
         }
@@ -176,7 +182,12 @@ namespace Raytracer.SceneElements
             return new Vec3(x, y, 0);
         }
 
-
+        private Point3 DefocusDiskSample()
+        {
+            // Returns a random point in the camera defocus disk.
+            var p = Vec3.RandomInUnitDisk();
+            return cameraCenter + (p.X * defocusDiskU) + (p.Y * defocusDiskV);
+        }
 
         //public static ColorV2 RayColor(Ray ray, IHittable world)
         //{
@@ -204,7 +215,7 @@ namespace Raytracer.SceneElements
             {
                 Ray scattered;
                 ColorV2 attenuation;
-                if(record.material.Scatter(ray, record, out attenuation, out scattered))
+                if (record.material.Scatter(ray, record, out attenuation, out scattered))
                 {
                     return attenuation * RayColor(scattered, depth - 1, world);
                 }
@@ -212,7 +223,7 @@ namespace Raytracer.SceneElements
                 //Vec3 direction = Vec3.RandomOnHemisphere(record.Normal); //before 9.4
                 //Vec3 direction = record.Normal + Vec3.RandomUnitVector();
                 //return 0.9 * RayColor(new Ray(record.P, direction),depth-1, world);
-                
+
                 // !!ATTENTION!!
                 // Changing variable above (from 0 to 1 ) determines 
                 // brightness

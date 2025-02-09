@@ -106,6 +106,18 @@ namespace Raytracer.vectorsAndOthersforNow
         // Unit Vector
         public static Vec3 UnitVector(Vec3 v) => v / v.Length();
 
+        public static Vec3 RandomInUnitDisk()
+        {
+            while (true)
+            {
+                var p = new Vec3(UtilityFunctions.RandomDouble(-1, 1), UtilityFunctions.RandomDouble(-1, 1), 0);
+                if (p.LengthSquared() < 1)
+                {
+                    return p;
+                }
+            }
+        }
+
         public static Vec3 RandomUnitVector()
         {
             while (true)
