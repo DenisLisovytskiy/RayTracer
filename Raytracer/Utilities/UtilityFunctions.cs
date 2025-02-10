@@ -25,4 +25,9 @@ public static class UtilityFunctions
         // Returns a random real in [min,max].
         return min + (max - min) * RandomDouble();
     }
+
+    public static int RandomInt(int min, int max)
+    {
+        return random.Next(min, max + 1);
+    }
 }
