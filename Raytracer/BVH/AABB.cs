@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Raytracer.BVH
 {
-    //may be better of as a struct
     //Axis-Aligned Bounding Box
-    public class AABB
+    public struct AABB
     {
         public Interval x;
         public Interval y;

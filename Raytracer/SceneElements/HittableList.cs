@@ -27,14 +27,9 @@ namespace Raytracer.SceneElements
         public void Add(IHittable obj)
         {
             Objects.Add(obj);
-            if (bbox == null)
-            {
-                bbox = obj.BoundingBox(); // First object, just assign its bounding box
-            }
-            else
-            {
-                bbox = new AABB(bbox, obj.BoundingBox()); // Combine bounding boxes
-            }
+
+            bbox = new AABB(bbox, obj.BoundingBox()); // Combine bounding boxes
+
             // debug
             //Console.WriteLine($"Object added. Total objects: {Objects.Count}");
         }

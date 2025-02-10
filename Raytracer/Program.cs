@@ -74,6 +74,7 @@ namespace Raytracer
             world.Add(new Sphere(new Point3(4, 1, 0), 1.0, material3));
 
             BVHNode bvhWorld = new BVHNode(world);
+            world.Clear();
             world.Add(bvhWorld);
 
             Camera camera = new()

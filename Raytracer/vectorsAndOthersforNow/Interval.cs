@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Raytracer.vectorsAndOthersforNow
 {
-    public class Interval
+    public struct Interval
     {
         public double Min { get; set; }
         public double Max { get; set; }
