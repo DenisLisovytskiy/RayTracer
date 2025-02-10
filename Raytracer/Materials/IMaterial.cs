@@ -10,6 +10,6 @@ namespace Raytracer.Materials
 {
     public interface IMaterial
     {
-        public bool Scatter(Ray rayIn, HitRecord record, out ColorV2 attenuation,out Ray scattered);
+        public bool Scatter(Ray rayIn, HitRecord record, out ColorV2 attenuation, out Ray scattered);
     }
 }

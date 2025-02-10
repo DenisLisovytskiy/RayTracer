@@ -14,7 +14,6 @@ namespace Raytracer.TextInterfacing
             Console.WriteLine($"Operation took: {elapsedTime}ms");
         }
 
-        //no longer used
         public static void ProgressMessage(int linesRemaining)
         {
             Console.Clear();

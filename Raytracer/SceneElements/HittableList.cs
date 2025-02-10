@@ -43,7 +43,6 @@ namespace Raytracer.SceneElements
                     record = tmpRecord;
                 }
             }
-
             return hitAnything;
         }
     }

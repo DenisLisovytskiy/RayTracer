@@ -9,27 +9,6 @@ namespace Raytracer.TextInterfacing
 {
     internal class InputForms
     {
-        public static Tuple<int, int> GetDimensions()
-        {
-            int w, h;
-            Console.WriteLine("Please input the dimensions of the image you'd like to render: [width] [height]");
-            var input = Console.ReadLine();
-            input.TrimEnd();
-            string[] parts = input.Split(' ');
-
-            if (2 == parts.Length)
-            {
-                w = int.Parse(parts[0]);
-                h = int.Parse(parts[1]);
-            }
-            else
-            {
-                w = 1080;
-                h = 1920;
-            }
-            return Tuple.Create(w, h);
-        }
-
         public static int GetWidth()
         {
             Console.WriteLine("Please input the width of the image you'd like to render: (ratio is 16/9)");
