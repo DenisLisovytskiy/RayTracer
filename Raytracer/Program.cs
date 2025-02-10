@@ -19,6 +19,8 @@ namespace Raytracer
 
         static void Main(string[] args)
         {
+            
+
             Stopwatch _stopwatch = Stopwatch.StartNew();
             //World            
             HittableList world = new HittableList();
