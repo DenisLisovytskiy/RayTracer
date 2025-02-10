@@ -72,37 +72,30 @@ namespace Raytracer.SceneElements
 
             ColorV2[] imageBuffer = new ColorV2[imageWidth * imageHeight];
             int numThreads = Environment.ProcessorCount; // Use all available CPU cores
-            int rowsPerTask = imageHeight / numThreads; // Divide work among tasks
-            Task[] tasks = new Task[numThreads];
+            Task[] tasks = new Task[imageHeight];
 
             // Launch multiple tasks for rendering
-            for (int t = 0; t < numThreads; t++)
+            Parallel.For(0, imageHeight, j =>
             {
-                int startRow = t * rowsPerTask;
-                int endRow = (t == numThreads - 1) ? imageHeight : startRow + rowsPerTask;
-
-                tasks[t] = Task.Run(() =>
+                tasks[j] = Task.Run(() =>
                 {
-                    for (int j = startRow; j < endRow; j++)
+                    for (int i = 0; i < imageWidth; i++)
                     {
-                        for (int i = 0; i < imageWidth; i++)
+                        ColorV2 pixelColor = new ColorV2(0, 0, 0);
+
+                        // Multi-sampling per pixel
+                        for (int sample = 0; sample < samplesPerPixel; sample++)
                         {
-                            ColorV2 pixelColor = new ColorV2(0, 0, 0);
-
-                            // Multi-sampling per pixel
-                            for (int sample = 0; sample < samplesPerPixel; sample++)
-                            {
-                                Ray r = GetRay(i, j);
-                                pixelColor += RayColor(r, maxDepth, world);
-                            }
-
-                            // Store the final pixel color in the buffer
-                            imageBuffer[j * imageWidth + i] = pixelColor * pixelSamplesScale;
+                            Ray r = GetRay(i, j);
+                            pixelColor += RayColor(r, maxDepth, world);
                         }
-                        ProgressReporter.UpdateWorkerProgress(1, "");
+
+                        // Store the final pixel color in the buffer
+                        imageBuffer[j * imageWidth + i] = pixelColor * pixelSamplesScale;
                     }
+                    ProgressReporter.UpdateWorkerProgress(1, "");
                 });
-            }
+            });
 
             Task.WhenAll(tasks).Wait(); // Wait for all tasks to finish
 

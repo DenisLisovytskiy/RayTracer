@@ -82,7 +82,7 @@ namespace Raytracer
                 aspectRatio = 16.0 / 9.0,
                 imageWidth = 400,
                 stopwatch = _stopwatch,
-                samplesPerPixel = 30, // increase by one -> one more operation for every pixel
+                samplesPerPixel = 100, // increase by one -> one more operation for every pixel
                                       // (even more, beacause it is a complex computation)
                                       // basically "how strong you want your antilaiasing" 
                 maxDepth = 15, // used to determine how far recursion can go in RayColor
