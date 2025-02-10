@@ -85,7 +85,7 @@ namespace Raytracer
                 samplesPerPixel = 100, // increase by one -> one more operation for every pixel
                                       // (even more, beacause it is a complex computation)
                                       // basically "how strong you want your antilaiasing" 
-                maxDepth = 15, // used to determine how far recursion can go in RayColor
+                maxDepth = 30, // used to determine how far recursion can go in RayColor
 
                 vfov = 20, // field of view, basicallly zooming in and out 
 

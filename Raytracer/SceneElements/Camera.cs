@@ -71,14 +71,13 @@ namespace Raytracer.SceneElements
             streamWriter.WriteLine("255");
 
             ColorV2[] imageBuffer = new ColorV2[imageWidth * imageHeight];
-            int numThreads = Environment.ProcessorCount; // Use all available CPU cores
-            Task[] tasks = new Task[imageHeight];
-
+            //int numThreads = Environment.ProcessorCount; // Use all available CPU cores
+            
             // Launch multiple tasks for rendering
             Parallel.For(0, imageHeight, j =>
             {
-                tasks[j] = Task.Run(() =>
-                {
+                //tasks[j] = Task.Run(() =>
+                //{
                     for (int i = 0; i < imageWidth; i++)
                     {
                         ColorV2 pixelColor = new ColorV2(0, 0, 0);
@@ -94,10 +93,9 @@ namespace Raytracer.SceneElements
                         imageBuffer[j * imageWidth + i] = pixelColor * pixelSamplesScale;
                     }
                     ProgressReporter.UpdateWorkerProgress(1, "");
-                });
+                
             });
 
-            Task.WhenAll(tasks).Wait(); // Wait for all tasks to finish
 
             foreach (var color in imageBuffer)
             {
