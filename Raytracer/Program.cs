@@ -1,5 +1,4 @@
-﻿
-using static System.Net.Mime.MediaTypeNames;
+﻿using static System.Net.Mime.MediaTypeNames;
 using Raytracer.Outputs;
 using System.Xml.Linq;
 using Raytracer.TextInterfacing;
@@ -11,6 +10,7 @@ using System.Reflection;
 using System.Diagnostics;
 using Raytracer.Utilities;
 using Raytracer.Materials;
+using Raytracer.BVH;
 
 namespace Raytracer
 {
@@ -73,6 +73,9 @@ namespace Raytracer
             var material3 = new Metal(new ColorV2(0.7, 0.6, 0.5), 0.0);
             world.Add(new Sphere(new Point3(4, 1, 0), 1.0, material3));
 
+            BVHNode bvhWorld = new BVHNode(world);
+            world.Clear();
+            world.Add(bvhWorld);
 
             Camera camera = new()
             {

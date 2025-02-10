@@ -2,11 +2,13 @@
 using Raytracer.vectorsAndOthersforNow;
 using System;
 using System.Collections.Generic;
+using Raytracer.BVH;
 
 namespace Raytracer.SceneElements
 {
     public class HittableList : IHittable
     {
+        private AABB bbox;
         // Using C# 9.0+ shorthand initialization for an empty list
         public List<IHittable> Objects { get; } = new();
 
@@ -25,6 +27,11 @@ namespace Raytracer.SceneElements
         public void Add(IHittable obj)
         {
             Objects.Add(obj);
+
+            bbox = new AABB(bbox, obj.BoundingBox()); // Combine bounding boxes
+
+            // debug
+            //Console.WriteLine($"Object added. Total objects: {Objects.Count}");
         }
 
         public bool Hit(Ray ray, Interval rayT, ref HitRecord record)
@@ -44,6 +51,11 @@ namespace Raytracer.SceneElements
                 }
             }
             return hitAnything;
+        }
+
+        public AABB BoundingBox()
+        {
+            return bbox;
         }
     }
 }

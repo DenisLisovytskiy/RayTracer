@@ -2,6 +2,7 @@
 using Raytracer.vectorsAndOthersforNow;
 using System;
 using Raytracer.Materials;
+using Raytracer.BVH;
 
 namespace Raytracer.SceneElements
 {
@@ -10,12 +11,19 @@ namespace Raytracer.SceneElements
         public Point3 Center { get; }
         public double Radius { get; }
         private IMaterial material;
+        private AABB bbox;
 
+        public AABB BoundingBox()
+        {
+            return bbox;
+        }
         public Sphere(Point3 center, double radius, IMaterial material)
         {
             Center = center;
             Radius = Math.Max(0, radius);
             this.material = material;
+            var rvec = new Vec3(radius, radius, radius);
+            bbox = new AABB(center - rvec, center + rvec);
         }
 
         public bool Hit(Ray ray, Interval rayT, ref HitRecord record)

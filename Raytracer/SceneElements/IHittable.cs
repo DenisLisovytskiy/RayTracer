@@ -1,6 +1,7 @@
 ﻿using System;
 using Raytracer.Materials;
 using Raytracer.vectorsAndOthersforNow;
+using Raytracer.BVH;
 
 namespace Raytracer.SceneElements
 {
@@ -30,5 +31,7 @@ namespace Raytracer.SceneElements
     public interface IHittable
     {
         bool Hit(Ray ray, Interval rayT, ref HitRecord record);
+
+        AABB BoundingBox();
     }
 }
