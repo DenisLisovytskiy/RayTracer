@@ -15,6 +15,8 @@ namespace Raytracer.SceneElements
 {
     public class Camera
     {
+        public ProgressReporter? ProgressReporter;
+
         public double aspectRatio = 1.0;
         public int imageWidth = 100;
         public int samplesPerPixel = 10;
@@ -59,6 +61,7 @@ namespace Raytracer.SceneElements
             if (stopwatch != null)
                 stopwatch.Stop();
             string name = InputForms.GetName();
+            ProgressReporter = new ProgressReporter(imageWidth, name, aspectRatio);
             if (stopwatch != null)
                 stopwatch.Start();
             StreamWriter streamWriter = new StreamWriter(name + ".ppm"); // c# neccesary to save the file
@@ -96,6 +99,7 @@ namespace Raytracer.SceneElements
                             // Store the final pixel color in the buffer
                             imageBuffer[j * imageWidth + i] = pixelColor * pixelSamplesScale;
                         }
+                        ProgressReporter.UpdateWorkerProgress(1, "");
                     }
                 });
             }
@@ -110,11 +114,11 @@ namespace Raytracer.SceneElements
             if (stopwatch != null)
             {
                 stopwatch.Stop();
-                ProgressReporting.DoneMessage($"{stopwatch.ElapsedMilliseconds}");
+                ProgressReporting.DoneMessage($"{stopwatch.ElapsedMilliseconds}", name);
             }
             else
             {
-                ProgressReporting.DoneMessage("No data");
+                ProgressReporting.DoneMessage("No data", name);
             }
 
             streamWriter.Flush();
