@@ -11,10 +11,12 @@ namespace Raytracer.TextInterfacing
     {
         public static int GetWidth()
         {
-            Console.WriteLine("Please input the width of the image you'd like to render: (ratio is 16/9)");
-            string input = Console.ReadLine();
-            input.TrimEnd();
-
+            Console.WriteLine(@"Please input the width of the image you'd like to render: (ratio is 16/9)");
+            string? input = Console.ReadLine();
+            if (input != null)
+                input.TrimEnd();
+            else
+                throw new Exception("null in the input");
             int number;
             if (int.TryParse(input, out number))
             {
