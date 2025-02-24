@@ -11,11 +11,15 @@ namespace Raytracer.Materials
 {
     struct Lambertian : IMaterial
     {
-        private ColorV2 albedo;
+        private Texture texture;
 
         public Lambertian(ColorV2 albedo)
         {
-            this.albedo = albedo;
+            texture = new SolidColor(albedo);
+        }
+        public Lambertian(Texture tex)
+        {
+            this.texture = tex;
         }
         public bool Scatter(Ray rayIn, HitRecord record, out ColorV2 attenuation, out Ray scattered)
         {
@@ -26,7 +30,7 @@ namespace Raytracer.Materials
                 scatterDirection = record.Normal;
             }
             scattered = new Ray(record.P, scatterDirection);
-            attenuation = albedo;
+            attenuation = texture.Value(record.U, record.V, record.P);
             return true;
         }
     }
