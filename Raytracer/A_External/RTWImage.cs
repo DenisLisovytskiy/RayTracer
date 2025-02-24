@@ -72,12 +72,12 @@ public class RTWImage : IDisposable
             {
                 var pixel = image[x, y];
 
-                // Store floating-point pixel data (C++ equivalent of stbi_loadf)
+                // Store floating-point pixel data (C++ equivalent of stbi_loadf from the RayTracer: the next week )
                 fdata[index] = pixel.R / 255.0f;
                 fdata[index + 1] = pixel.G / 255.0f;
                 fdata[index + 2] = pixel.B / 255.0f;
 
-                // Convert to byte format (same as C++ float_to_byte)
+                // Convert to byte format (same as C++ float_to_byte from the RayTracer: the next week) 
                 bdata[index] = FloatToByte(fdata[index]);
                 bdata[index + 1] = FloatToByte(fdata[index + 1]);
                 bdata[index + 2] = FloatToByte(fdata[index + 2]);
@@ -114,6 +114,7 @@ public class RTWImage : IDisposable
 
     private int Clamp(int value, int min, int max)
     {
+        // Return the value clamped to the range [low, high).
         if (value < min) return min;
         if (value > max) return max;
         return value;

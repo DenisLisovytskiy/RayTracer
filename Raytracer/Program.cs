@@ -181,7 +181,7 @@ namespace Raytracer
         }
         static void Main(string[] args)
         {
-            switch (1)
+            switch (3)
             {
                 case 1: CheckeredSceneBook1(); break;
                 case 2: CheckeredSpheres(); break;
