@@ -92,6 +92,22 @@ namespace Raytracer.SceneElements
             );
         }
     }
+
+    public class NoiseTexture : Texture
+    {
+        private Perlin noise = new Perlin();
+        private double scale;
+        public NoiseTexture(double scale)
+        {
+            this.scale = scale;
+        }
+        public override ColorV2 Value(double u, double v, Point3 p) 
+        {
+            //return new ColorV2(1, 1, 1) * noise.Turbulence(p, 7); //5.6
+            return new ColorV2( 0.5, 0.5, 0.5) *(1 + Math.Sin((scale * p.Z) + 10 * noise.Turbulence(p, 7))); //5.7
+
+        }
+    }
 }
 
 
