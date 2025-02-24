@@ -2,11 +2,11 @@
 using Raytracer.Outputs;
 using System.Xml.Linq;
 using Raytracer.TextInterfacing;
-using Raytracer.vectorsAndOthersforNow;
 using System.Drawing;
 using System.Runtime.CompilerServices;
-using Raytracer.SceneElements;
 using System.Reflection;
+using Raytracer.vectorsAndOthersforNow;
+using Raytracer.SceneElements;
 using System.Diagnostics;
 using Raytracer.Utilities;
 using Raytracer.Materials;
@@ -17,16 +17,18 @@ namespace Raytracer
     internal class Program
     {
 
-        static void Main(string[] args)
+        static void CheckeredSceneBook1()
         {
-            
-
             Stopwatch _stopwatch = Stopwatch.StartNew();
             //World            
             HittableList world = new HittableList();
 
-            var groundMaterial = new Lambertian(new ColorV2(0.5, 0.5, 0.5));
-            world.Add(new Sphere(new Point3(0, -1000, 0), 1000, groundMaterial));
+            var checker = new CheckerTexture(0.32, new ColorV2(1.0, 0.713, 0.756), new ColorV2(1.0, 0.078, 0.576));
+            world.Add(new Sphere(new Point3(0, -1000, 0), 1000, new Lambertian(checker)));
+
+            // before textures
+            //var groundMaterial = new Lambertian(new ColorV2(0.5, 0.5, 0.5));
+            //world.Add(new Sphere(new Point3(0, -1000, 0), 1000, groundMaterial));
 
             for (int a = -11; a < 11; a++)
             {
@@ -82,10 +84,10 @@ namespace Raytracer
                 aspectRatio = 16.0 / 9.0,
                 imageWidth = 400,
                 stopwatch = _stopwatch,
-                samplesPerPixel = 400, // increase by one -> one more operation for every pixel
+                samplesPerPixel = 100, // increase by one -> one more operation for every pixel
                                       // (even more, beacause it is a complex computation)
                                       // basically "how strong you want your antilaiasing" 
-                maxDepth = 50, // used to determine how far recursion can go in RayColor
+                maxDepth = 10, // used to determine how far recursion can go in RayColor
 
                 vfov = 20, // field of view, basicallly zooming in and out 
 
@@ -98,6 +100,92 @@ namespace Raytracer
             };
 
             camera.Render(world);
+        }
+
+        static void CheckeredSpheres()
+        {
+            Stopwatch _stopwatch = Stopwatch.StartNew();
+            //World            
+            HittableList world = new HittableList();
+
+            var checker = new CheckerTexture(0.32, new ColorV2(1.0, 0.713, 0.756), new ColorV2(1.0, 0.078, 0.576));
+            world.Add(new Sphere(new Point3(0, -10, 0), 10, new Lambertian(checker)));
+            world.Add(new Sphere(new Point3(0, 10, 0), 10, new Lambertian(checker)));
+
+
+
+            BVHNode bvhWorld = new BVHNode(world);
+            world.Clear();
+            world.Add(bvhWorld);
+
+            Camera camera = new()
+            {
+                aspectRatio = 16.0 / 9.0,
+                imageWidth = 400,
+                stopwatch = _stopwatch,
+                samplesPerPixel = 100, // increase by one -> one more operation for every pixel
+                                       // (even more, beacause it is a complex computation)
+                                       // basically "how strong you want your antilaiasing" 
+                maxDepth = 50, // used to determine how far recursion can go in RayColor
+
+                vfov = 20, // field of view, basicallly zooming in and out 
+
+                lookFrom = new Point3(13, 2, 3),
+                lookAt = new Point3(0, 0, 0),
+                vup = new Vec3(0, 1, 0),
+
+                defocusAngle = 0,
+                focusDistance = 10.0
+            };
+
+            camera.Render(world);
+        }
+
+        static void Earth()
+        {
+            Stopwatch _stopwatch = Stopwatch.StartNew();
+            //World            
+            HittableList world = new HittableList();
+
+            var earthTexture = new ImageTexture("earthmap.jpg");
+            var earthSurface = new Lambertian(earthTexture);
+            var globe = new Sphere(new Point3(0, 0, 0), 2, earthSurface);
+
+            world.Add(globe);   
+
+            BVHNode bvhWorld = new BVHNode(world);
+            world.Clear();
+            world.Add(bvhWorld);
+            Camera camera = new()
+            {
+                aspectRatio = 16.0 / 9.0,
+                imageWidth = 400,
+                stopwatch = _stopwatch,
+                samplesPerPixel = 100, // increase by one -> one more operation for every pixel
+                                       // (even more, beacause it is a complex computation)
+                                       // basically "how strong you want your antilaiasing" 
+                maxDepth = 50, // used to determine how far recursion can go in RayColor
+
+                vfov = 20, // field of view, basicallly zooming in and out 
+
+                lookFrom = new Point3(0, 0, 12),
+                lookAt = new Point3(0, 0, 0),
+                vup = new Vec3(0, 1, 0),
+
+                defocusAngle = 0,
+                //focusDistance = 10.0
+            };
+            camera.Render(world);
+
+        }
+        static void Main(string[] args)
+        {
+            switch (3)
+            {
+                case 1: CheckeredSceneBook1(); break;
+                case 2: CheckeredSpheres(); break;
+                case 3: Earth()  ; break; 
+            }
         }
     }
 }

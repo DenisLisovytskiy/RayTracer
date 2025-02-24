@@ -11,6 +11,8 @@ namespace Raytracer.SceneElements
         public Point3 Normal { get; private set; }
         public IMaterial? material;
         public double T { get; set; }
+        public double U;
+        public double V;    
         public bool FrontFace { get; private set; }
 
         public HitRecord(Point3 p, Point3 normal, double t, bool frontFace)
