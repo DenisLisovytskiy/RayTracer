@@ -71,26 +71,27 @@ namespace Raytracer.SceneElements
 
         public override ColorV2 Value(double u, double v, Point3 p)
         {
-            // If we have no texture data, then return solid cyan as a debugging aid.
+            // If we have no texture data, return solid cyan (debugging aid)
             if (image.Height <= 0)
-                return new  ColorV2(0,1,1);
+                return new ColorV2(0, 1, 1);
 
             // Clamp input texture coordinates to [0,1] x [1,0]
-            u = new Interval(0,1).Clamp(u);
+            u = new Interval(0, 1).Clamp(u);
             v = 1.0 - new Interval(0, 1).Clamp(v);
 
             var i = (int)(u * image.Width);
-            var j = (int)(u * image.Height);
+            var j = (int)(v * image.Height);
             var pixel = image.PixelData(i, j);
 
-            double colorScale = 1.0 / 255.0; 
+            double colorScale = 1.0 / 255.0;
 
             return new ColorV2(
-                (pixel[0] * colorScale),
-                (pixel[1] * colorScale),
-                (pixel[2] * colorScale)
+                pixel[0] * colorScale,
+                pixel[1] * colorScale,
+                pixel[2] * colorScale
             );
         }
     }
-
 }
+
+

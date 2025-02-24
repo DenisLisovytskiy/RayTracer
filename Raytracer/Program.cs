@@ -147,6 +147,7 @@ namespace Raytracer
             //World            
             HittableList world = new HittableList();
 
+            var checker = new CheckerTexture(0.32, new ColorV2(1.0, 0.713, 0.756), new ColorV2(1.0, 0.078, 0.576));
             var earthTexture = new ImageTexture("earthmap.jpg");
             var earthSurface = new Lambertian(earthTexture);
             var globe = new Sphere(new Point3(0, 0, 0), 2, earthSurface);
@@ -180,7 +181,7 @@ namespace Raytracer
         }
         static void Main(string[] args)
         {
-            switch (3)
+            switch (1)
             {
                 case 1: CheckeredSceneBook1(); break;
                 case 2: CheckeredSpheres(); break;

@@ -61,8 +61,9 @@ public class RTWImage : IDisposable
 
     private void ConvertToFloatAndByte(Image<Rgba32> image)
     {
-        fdata = new float[imageWidth * imageHeight * BytesPerPixel];
-        bdata = new byte[imageWidth * imageHeight * BytesPerPixel];
+        int totalPixels = imageWidth * imageHeight;
+        fdata = new float[totalPixels * BytesPerPixel];
+        bdata = new byte[totalPixels * BytesPerPixel];
 
         int index = 0;
         for (int y = 0; y < imageHeight; y++)
@@ -70,17 +71,27 @@ public class RTWImage : IDisposable
             for (int x = 0; x < imageWidth; x++)
             {
                 var pixel = image[x, y];
+
+                // Store floating-point pixel data (C++ equivalent of stbi_loadf)
                 fdata[index] = pixel.R / 255.0f;
                 fdata[index + 1] = pixel.G / 255.0f;
                 fdata[index + 2] = pixel.B / 255.0f;
 
-                bdata[index] = pixel.R;
-                bdata[index + 1] = pixel.G;
-                bdata[index + 2] = pixel.B;
+                // Convert to byte format (same as C++ float_to_byte)
+                bdata[index] = FloatToByte(fdata[index]);
+                bdata[index + 1] = FloatToByte(fdata[index + 1]);
+                bdata[index + 2] = FloatToByte(fdata[index + 2]);
 
                 index += BytesPerPixel;
             }
         }
+    }
+
+    private static byte FloatToByte(float value)
+    {
+        if (value <= 0.0f) return 0;
+        if (value >= 1.0f) return 255;
+        return (byte)(value * 256.0f);
     }
 
     public int Width => imageWidth;
