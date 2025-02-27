@@ -11,6 +11,7 @@ using System.Diagnostics;
 using Raytracer.Utilities;
 using Raytracer.Materials;
 using Raytracer.BVH;
+using System.Runtime.InteropServices;
 
 namespace Raytracer
 {
@@ -299,15 +300,62 @@ namespace Raytracer
             camera.Render(world);
 
         }
+
+        static void Quads()
+        {
+            Stopwatch _stopwatch = Stopwatch.StartNew();
+            //World            
+            HittableList world = new HittableList();
+
+            //materials 
+            var left = new Lambertian(new ColorV2(1.0, 0.0, 0.0));
+            var back = new Lambertian(new ColorV2(0.0, 1.0, 0.0));
+            var right = new Lambertian(new ColorV2(0.0, 0.0, 1.0));
+            var up = new Lambertian(new ColorV2(1.0, 1.0, 0.0));
+            var down = new Lambertian(new ColorV2(1.0, 0.0, 1.0));
+
+            //quads
+            world.Add(new Quad(new Point3(-3, -2, 5), new Vec3(0, 0, -4), new Vec3(0, 4, 0), left));
+            world.Add(new Quad(new Point3(-2, -2, 0), new Vec3(4, 0, 0), new Vec3(0, 4, 0), back));
+            world.Add(new Quad(new Point3(3, -2, 1), new Vec3(0, 0, 4), new Vec3(0, 4, 0), right));
+            world.Add(new Quad(new Point3(-2, 3, 1), new Vec3(4, 0, 0), new Vec3(0, 0, 4), up));
+            world.Add(new Quad(new Point3(-2, -3, 5), new Vec3(4, 0, 0), new Vec3(0, 0, -4), down));
+
+            BVHNode bvhWorld = new BVHNode(world);
+            world.Clear();
+            world.Add(bvhWorld);
+
+            Camera camera = new()
+            {
+                aspectRatio = 16.0 / 9.0,
+                imageWidth = 400,
+                stopwatch = _stopwatch,
+                samplesPerPixel = 100, // increase by one -> one more operation for every pixel
+                                       // (even more, beacause it is a complex computation)
+                                       // basically "how strong you want your antilaiasing" 
+                maxDepth = 50, // used to determine how far recursion can go in RayColor
+
+                vfov = 80, // field of view, basicallly zooming in and out 
+
+                lookFrom = new Point3(0,0,9),
+                lookAt = new Point3(0, 0, 0),
+                vup = new Vec3(0, 1, 0),
+
+                defocusAngle = 0,
+            };
+            camera.Render(world);
+        }
+
         static void Main(string[] args)
         {
-            switch (5)
+            switch (6)
             {
                 case 1: CheckeredSceneBook1(); break;
                 case 2: CheckeredSceneBook1_withEarth(); break;
                 case 3: CheckeredSpheres(); break;
                 case 4: Earth(); break;
                 case 5: PerlinSpheres(); break;
+                case 6: Quads(); break;
             }
         }
     }
