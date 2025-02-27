@@ -12,6 +12,7 @@ using Raytracer.Utilities;
 using Raytracer.Materials;
 using Raytracer.BVH;
 using System.Runtime.InteropServices;
+using Raytracer.SceneElements.Primitives2D;
 
 namespace Raytracer
 {
@@ -346,6 +347,43 @@ namespace Raytracer
             camera.Render(world);
         }
 
+        static void Triangle()
+        {
+            Stopwatch _stopwatch = Stopwatch.StartNew();
+            //World            
+            HittableList world = new HittableList();
+
+            //materials (nice green)
+            var material = new Lambertian(new ColorV2(0.535, 0.949, 0.211));
+
+            //triangle
+            world.Add(new Triangle(new Point3(-2, -2, 0), new Vec3(4, 0, 0), new Vec3(0, 4, 0), material));
+
+            BVHNode bvhWorld = new BVHNode(world);
+            world.Clear();
+            world.Add(bvhWorld);
+
+            Camera camera = new()
+            {
+                aspectRatio = 16.0 / 9.0,
+                imageWidth = 400,
+                stopwatch = _stopwatch,
+                samplesPerPixel = 100, // increase by one -> one more operation for every pixel
+                                       // (even more, beacause it is a complex computation)
+                                       // basically "how strong you want your antilaiasing" 
+                maxDepth = 50, // used to determine how far recursion can go in RayColor
+
+                vfov = 80, // field of view, basicallly zooming in and out 
+
+                lookFrom = new Point3(0, 0, 9),
+                lookAt = new Point3(0, 0, 0),
+                vup = new Vec3(0, 1, 0),
+
+                defocusAngle = 0,
+            };
+            camera.Render(world);
+        }
+
         static void Main(string[] args)
         {
             switch (6)
@@ -356,6 +394,7 @@ namespace Raytracer
                 case 4: Earth(); break;
                 case 5: PerlinSpheres(); break;
                 case 6: Quads(); break;
+                case 7: Triangle(); break;
             }
         }
     }
