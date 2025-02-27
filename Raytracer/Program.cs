@@ -90,6 +90,7 @@ namespace Raytracer
                                        // (even more, beacause it is a complex computation)
                                        // basically "how strong you want your antilaiasing" 
                 maxDepth = 10, // used to determine how far recursion can go in RayColor
+                background = new ColorV2(0.70, 0.80, 1.00),
 
                 vfov = 20, // field of view, basicallly zooming in and out 
 
@@ -177,6 +178,7 @@ namespace Raytracer
                                        // (even more, beacause it is a complex computation)
                                        // basically "how strong you want your antilaiasing" 
                 maxDepth = 10, // used to determine how far recursion can go in RayColor
+                background = new ColorV2(0.70, 0.80, 1.00),
 
                 vfov = 20, // field of view, basicallly zooming in and out 
 
@@ -216,6 +218,7 @@ namespace Raytracer
                                        // (even more, beacause it is a complex computation)
                                        // basically "how strong you want your antilaiasing" 
                 maxDepth = 50, // used to determine how far recursion can go in RayColor
+                background = new ColorV2(0.70, 0.80, 1.00),
 
                 vfov = 20, // field of view, basicallly zooming in and out 
 
@@ -253,6 +256,7 @@ namespace Raytracer
                                        // (even more, beacause it is a complex computation)
                                        // basically "how strong you want your antilaiasing" 
                 maxDepth = 50, // used to determine how far recursion can go in RayColor
+                background = new ColorV2(0.70, 0.80, 1.00),
 
                 vfov = 20, // field of view, basicallly zooming in and out 
 
@@ -288,6 +292,7 @@ namespace Raytracer
                                        // (even more, beacause it is a complex computation)
                                        // basically "how strong you want your antilaiasing" 
                 maxDepth = 50, // used to determine how far recursion can go in RayColor
+                background = new ColorV2(0.70, 0.80, 1.00),
 
                 vfov = 20, // field of view, basicallly zooming in and out 
 
@@ -335,10 +340,11 @@ namespace Raytracer
                                        // (even more, beacause it is a complex computation)
                                        // basically "how strong you want your antilaiasing" 
                 maxDepth = 50, // used to determine how far recursion can go in RayColor
+                background = new ColorV2(0.70, 0.80, 1.00),
 
                 vfov = 80, // field of view, basicallly zooming in and out 
 
-                lookFrom = new Point3(0,0,9),
+                lookFrom = new Point3(0, 0, 9),
                 lookAt = new Point3(0, 0, 0),
                 vup = new Vec3(0, 1, 0),
 
@@ -372,6 +378,7 @@ namespace Raytracer
                                        // (even more, beacause it is a complex computation)
                                        // basically "how strong you want your antilaiasing" 
                 maxDepth = 50, // used to determine how far recursion can go in RayColor
+                background = new ColorV2(0.70, 0.80, 1.00),
 
                 vfov = 80, // field of view, basicallly zooming in and out 
 
@@ -384,9 +391,97 @@ namespace Raytracer
             camera.Render(world);
         }
 
+        static void SimpleLight()
+        {
+            Stopwatch _stopwatch = Stopwatch.StartNew();
+            //World            
+            HittableList world = new HittableList();
+
+            //objects
+            var pertext = new NoiseTexture(4);
+            world.Add(new Sphere(new Point3(0, -1000, 0), 1000, new Lambertian(pertext)));
+            world.Add(new Sphere(new Point3(0, 2, 0), 2, new Lambertian(pertext)));
+
+            //light source
+            var light = new DiffuseLight(new ColorV2(4, 4, 4));
+            world.Add(new Sphere(new Point3(0, 7, 0), 2, light));
+            world.Add(new Quad(new Point3(3, 1, -2), new Vec3(2, 0, 0), new Vec3(0, 2, 0), light));
+
+            BVHNode bvhWorld = new BVHNode(world);
+            world.Clear();
+            world.Add(bvhWorld);
+
+            Camera camera = new()
+            {
+                aspectRatio = 16.0 / 9.0,
+                imageWidth = 400,
+                stopwatch = _stopwatch,
+                samplesPerPixel = 100, // increase by one -> one more operation for every pixel
+                                       // (even more, beacause it is a complex computation)
+                                       // basically "how strong you want your antilaiasing" 
+                maxDepth = 50, // used to determine how far recursion can go in RayColor
+                background = new ColorV2(0, 0, 0),
+
+                vfov = 20, // field of view, basicallly zooming in and out 
+
+                lookFrom = new Point3(26, 3, 6),
+                lookAt = new Point3(0, 2, 0),
+                vup = new Vec3(0, 1, 0),
+
+                defocusAngle = 0,
+            };
+            camera.Render(world);
+        }
+
+        static void CornellBox()
+        {
+            Stopwatch _stopwatch = Stopwatch.StartNew();
+            //World            
+            HittableList world = new HittableList();
+
+            //materials
+            var red = new Lambertian(new ColorV2(0.65, 0.05, 0.05));
+            var white = new Lambertian(new ColorV2(0.73, 0.73, 0.73));
+            var green = new Lambertian(new ColorV2(0.12, 0.45, 0.15));
+            var light = new DiffuseLight(new ColorV2(15, 15, 15));
+
+            //objects
+            world.Add(new Quad(new Point3(555, 0, 0), new Vec3(0, 555, 0), new Vec3(0, 0, 555), green));
+            world.Add(new Quad(new Point3(0, 0, 0), new Vec3(0, 555, 0), new Vec3(0, 0, 555), red));
+            world.Add(new Quad(new Point3(343, 554, 332), new Vec3(-130, 0, 0), new Vec3(0, 0, -105), light));
+            world.Add(new Quad(new Point3(0, 0, 0), new Vec3(555, 0, 0), new Vec3(0, 0, 555), white));
+            world.Add(new Quad(new Point3(555, 555, 555), new Vec3(-555, 0, 0), new Vec3(0, 0, -555), white));
+            world.Add(new Quad(new Point3(0, 0, 555), new Vec3(555, 0, 0), new Vec3(0, 555, 0), white));
+
+            BVHNode bvhWorld = new BVHNode(world);
+            world.Clear();
+            world.Add(bvhWorld);
+
+            Camera camera = new()
+            {
+                aspectRatio = 16.0 / 9.0,
+                imageWidth = 400,
+                stopwatch = _stopwatch,
+                samplesPerPixel = 100, // increase by one -> one more operation for every pixel
+                                       // (even more, beacause it is a complex computation)
+                                       // basically "how strong you want your antilaiasing" 
+                maxDepth = 50, // used to determine how far recursion can go in RayColor
+                background = new ColorV2(0, 0, 0),
+
+                vfov = 40, // field of view, basicallly zooming in and out 
+
+                lookFrom = new Point3(278, 278, -800),
+                lookAt = new Point3(278, 278, 0),
+                vup = new Vec3(0, 1, 0),
+
+                defocusAngle = 0,
+            };
+            camera.Render(world);
+        }
+
         static void Main(string[] args)
         {
-            switch (6)
+            switch (9)
             {
                 case 1: CheckeredSceneBook1(); break;
                 case 2: CheckeredSceneBook1_withEarth(); break;
@@ -395,6 +490,8 @@ namespace Raytracer
                 case 5: PerlinSpheres(); break;
                 case 6: Quads(); break;
                 case 7: Triangle(); break;
+                case 8: SimpleLight(); break;
+                case 9: CornellBox(); break;
             }
         }
     }
