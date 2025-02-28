@@ -169,12 +169,26 @@ namespace Raytracer.vectorsAndOthersforNow
             output.WriteLine($"{rByte} {gByte} {bByte}");
         }
 
-        public double this[int index] => index switch
+        public double this[int index]
         {
-            0 => X,
-            1 => Y,
-            2 => Z,
-            _ => throw new IndexOutOfRangeException("Vec3 available indices are 0 1 2")
-        };
+            get => index switch
+            {
+                0 => X,
+                1 => Y,
+                2 => Z,
+                _ => throw new IndexOutOfRangeException("Vec3 available indices are 0, 1, 2")
+            };
+            set
+            {
+                switch (index)
+                {
+                    case 0: X = value; break;
+                    case 1: Y = value; break;
+                    case 2: Z = value; break;
+                    default: throw new IndexOutOfRangeException("Vec3 available indices are 0, 1, 2");
+                }
+            }
+        }
+
     }
 }

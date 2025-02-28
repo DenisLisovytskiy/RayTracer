@@ -57,7 +57,7 @@ namespace Raytracer.SceneElements
             Vec3 outwardNormal = (record.P - Center) / Radius;
             record.SetFaceNormal(ray, outwardNormal);
             GetSphereUV(outwardNormal, out record.U, out record.V);
-            record.material = material;
+            record.material = material; 
 
             return true;
         }

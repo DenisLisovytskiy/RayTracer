@@ -56,5 +56,15 @@ namespace Raytracer.vectorsAndOthersforNow
 
         public static readonly Interval Empty = new Interval(double.PositiveInfinity, double.NegativeInfinity);
         public static readonly Interval Universe = new Interval(double.NegativeInfinity, double.PositiveInfinity);
+
+        public static Interval operator +(Interval ival, double displacement)
+        {
+            return new Interval(ival.Min + displacement, ival.Max + displacement);
+        }
+
+        public static Interval operator +(double displacement, Interval ival)
+        {
+            return ival + displacement;
+        }
     }
 }
