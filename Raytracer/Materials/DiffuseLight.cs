@@ -27,13 +27,12 @@ namespace Raytracer.Materials
             return texture.Value(u, v, p);
         }
 
-        // This is not a great way to handle it but it works, needs to be changed later
         public bool Scatter(Ray rayIn, HitRecord record, out Point3 attenuation, out Ray scattered)
         {
             //these do not matter as they wont be used
-            attenuation = new Vec3(0,0,0);
+            attenuation = default;
             //in order to not create a new object we pass rayin 
-            scattered = rayIn;
+            scattered = default;
             return false;
         }
     }

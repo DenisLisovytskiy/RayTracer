@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -94,6 +95,16 @@ namespace Raytracer.BVH
                 return x.Size() > z.Size() ? 0 : 2;
             else
                 return y.Size() > z.Size() ? 1 : 2;
+        }
+
+        public static AABB operator +(AABB bbox, Vec3 offset)
+        {
+            return new AABB(bbox.x + offset.X, bbox.y + offset.Y, bbox.z + offset.Z);
+        }
+
+        public static AABB operator +(Vec3 offset, AABB bbox)
+        {
+            return bbox + offset;
         }
     }
 }

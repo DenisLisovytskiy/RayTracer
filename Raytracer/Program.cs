@@ -433,7 +433,7 @@ namespace Raytracer
             camera.Render(world);
         }
 
-        static void CornellBox()
+        static void EmptyCornellBox()
         {
             Stopwatch _stopwatch = Stopwatch.StartNew();
             //World            
@@ -479,9 +479,69 @@ namespace Raytracer
             camera.Render(world);
         }
 
+        static void CornellBox()
+        {
+            Stopwatch _stopwatch = Stopwatch.StartNew();
+            //World            
+            HittableList world = new HittableList();
+
+            //materials
+            var red = new Lambertian(new ColorV2(0.65, 0.05, 0.05));
+            var white = new Lambertian(new ColorV2(0.73, 0.73, 0.73));
+            var green = new Lambertian(new ColorV2(0.12, 0.45, 0.15));
+            var light = new DiffuseLight(new ColorV2(15, 15, 15));
+
+            //objects
+            world.Add(new Quad(new Point3(555, 0, 0), new Vec3(0, 555, 0), new Vec3(0, 0, 555), green));
+            world.Add(new Quad(new Point3(0, 0, 0), new Vec3(0, 555, 0), new Vec3(0, 0, 555), red));
+            world.Add(new Quad(new Point3(343, 554, 332), new Vec3(-130, 0, 0), new Vec3(0, 0, -105), light));
+            world.Add(new Quad(new Point3(0, 0, 0), new Vec3(555, 0, 0), new Vec3(0, 0, 555), white));
+            world.Add(new Quad(new Point3(555, 555, 555), new Vec3(-555, 0, 0), new Vec3(0, 0, -555), white));
+            world.Add(new Quad(new Point3(0, 0, 555), new Vec3(555, 0, 0), new Vec3(0, 555, 0), white));
+
+            //world.Add(BoxCreator.Box(new Point3(130, 0, 65), new Point3(295, 165, 230), white));
+            //world.Add(BoxCreator.Box(new Point3(295, 0, 295), new Point3(430, 330, 460), white));
+
+            // Create a box
+            var box1 = BoxCreator.Box(new Point3(0, 0, 0), new Point3(165, 330, 165), white);
+            var rotatedbox1 = new RotateY(box1, 15);
+            var translatedbox1 = new Translate(rotatedbox1, new Vec3(265, 0, 295));
+            world.Add(translatedbox1);
+
+            var box2 = BoxCreator.Box(new Point3(0, 0, 0), new Point3(165, 165, 165), white);
+            var rotatedbox2 = new RotateY(box2, -18);
+            var translatedbox2 = new Translate(rotatedbox2, new Vec3(130, 0, 65));
+            world.Add(translatedbox2);
+
+            BVHNode bvhWorld = new BVHNode(world);
+            world.Clear();
+            world.Add(bvhWorld);
+
+            Camera camera = new()
+            {
+                aspectRatio = 16.0 / 9.0,
+                imageWidth = 400,
+                stopwatch = _stopwatch,
+                samplesPerPixel = 100, // increase by one -> one more operation for every pixel
+                                       // (even more, beacause it is a complex computation)
+                                       // basically "how strong you want your antilaiasing" 
+                maxDepth = 50, // used to determine how far recursion can go in RayColor
+                background = new ColorV2(0, 0, 0),
+
+                vfov = 40, // field of view, basicallly zooming in and out 
+
+                lookFrom = new Point3(278, 278, -800),
+                lookAt = new Point3(278, 278, 0),
+                vup = new Vec3(0, 1, 0),
+
+                defocusAngle = 0,
+            };
+            camera.Render(world);
+        }
+
         static void Main(string[] args)
         {
-            switch (9)
+            switch (10)
             {
                 case 1: CheckeredSceneBook1(); break;
                 case 2: CheckeredSceneBook1_withEarth(); break;
@@ -491,7 +551,8 @@ namespace Raytracer
                 case 6: Quads(); break;
                 case 7: Triangle(); break;
                 case 8: SimpleLight(); break;
-                case 9: CornellBox(); break;
+                case 9: EmptyCornellBox(); break;
+                case 10: CornellBox(); break;               
             }
         }
     }

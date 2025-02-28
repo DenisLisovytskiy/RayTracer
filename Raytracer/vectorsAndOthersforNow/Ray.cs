@@ -8,12 +8,21 @@ namespace Raytracer.vectorsAndOthersforNow
         public Point3 Origin { get; }
         public Vec3 Direction { get; }
 
+        public double Time { get; }
         public Ray() : this(new Point3(0, 0, 0), new Vec3(0, 0, 0)) { }
-
+        
         public Ray(Point3 origin, Vec3 direction)
         {
             Origin = origin;
             Direction = direction;
+            Time = 0;
+        }
+
+        public Ray(Point3 origin, Vec3 direction, double time)
+        {
+            Origin = origin;
+            Direction = direction;
+            Time = time;
         }
 
         // Returns the point at a given parameter t along the ray
