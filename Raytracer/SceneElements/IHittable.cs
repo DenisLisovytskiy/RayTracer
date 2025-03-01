@@ -20,7 +20,7 @@
             public double T;
             public double U;
             public double V;
-            public bool FrontFace { get; private set; }
+            public bool FrontFace { get;  set; }
 
             public HitRecord(Point3 p, Point3 normal, double t, bool frontFace)
             {
