@@ -13,6 +13,7 @@ using Raytracer.Materials;
 using Raytracer.BVH;
 using System.Runtime.InteropServices;
 using Raytracer.SceneElements.Primitives2D;
+using System.Diagnostics.Metrics;
 
 namespace Raytracer
 {
@@ -596,9 +597,110 @@ namespace Raytracer
             camera.Render(world);
         }
 
+        static void B2FinalScene()
+        {
+            Stopwatch _stopwatch = Stopwatch.StartNew();
+
+           
+
+            //World            
+            HittableList world = new HittableList();
+
+           
+
+            var light = new DiffuseLight(new ColorV2(7, 7, 7));
+            world.Add(new Quad(new Point3(123, 554, 147), new Vec3(300, 0, 0), new Vec3(0, 0, 265), light));
+
+            var center1 = new Point3(400, 400, 200);
+            var sphere_material = new Lambertian(new ColorV2(0.7, 0.3, 0.1));
+            world.Add(new Sphere(center1, 50, sphere_material));
+
+            world.Add(new Sphere(new Point3(260, 150, 45), 50, new Dielectric(1.5)));
+            world.Add(new Sphere(
+                new Point3(0, 150, 145), 50, new Metal(new ColorV2(0.8, 0.8, 0.9), 1.0)
+            ));
+
+            var boundary = new Sphere(new Point3(360, 150, 145), 70, new Dielectric(1.5));
+            world.Add(boundary);
+            world.Add(new ConstantMedium(boundary, 0.2, new ColorV2(0.2, 0.4, 0.9)));
+            boundary = new Sphere(new Point3(0, 0, 0), 5000, new Dielectric(1.5));
+            world.Add(new ConstantMedium(boundary, .0001, new ColorV2(1, 1, 1)));
+
+            var emat = new Lambertian(new ImageTexture("earthmap.jpg"));
+            world.Add(new Sphere(new Point3(400, 200, 400), 100, emat));
+            var pertext = new NoiseTexture(0.2);
+            world.Add(new Sphere(new Point3(220, 280, 300), 80, new Lambertian(pertext)));
+
+            //-
+            BVHNode bvhWorld = new BVHNode(world);
+            world.Clear();
+            world.Add(bvhWorld);
+            //-
+
+            //boxes1
+            HittableList boxes1 = new HittableList();
+            var ground = new Lambertian(new ColorV2(0.48, 0.83, 0.53));
+
+            int boxes_per_side = 20;
+            for (int i = 0; i < boxes_per_side; i++)
+            {
+                for (int j = 0; j < boxes_per_side; j++)
+                {
+                    var w = 100.0;
+                    var x0 = -1000.0 + i * w;
+                    var z0 = -1000.0 + j * w;
+                    var y0 = 0.0;
+                    var x1 = x0 + w;
+                    var y1 = UtilityFunctions.RandomDouble(1, 101);
+                    var z1 = z0 + w;
+
+                    boxes1.Add(BoxCreator.Box(new Point3(x0, y0, z0), new Point3(x1, y1, z1), ground));
+                }
+            }
+            //adding boxes1
+            world.Add(new BVHNode(boxes1));
+
+            //boxes2
+            HittableList boxes2 = new HittableList();
+            var white = new Lambertian(new ColorV2(0.73, 0.73, 0.73));
+            int ns = 1000;
+            for (int j = 0; j < ns; j++)
+            {
+                boxes2.Add(new Sphere(Point3.Random(0, 165) , 10, white));
+            }
+            //adding boxes2
+            world.Add(new Translate(
+                new RotateY(
+                    new BVHNode(boxes2), 15),
+                    new Vec3(-100, 270, 395)
+                )
+            );
+
+            Camera camera = new()
+            {
+                aspectRatio = 16.0 / 9.0,
+                imageWidth = 400,
+                stopwatch = _stopwatch,
+                samplesPerPixel = 100, // increase by one -> one more operation for every pixel
+                                       // (even more, beacause it is a complex computation)
+                                       // basically "how strong you want your antilaiasing" 
+                maxDepth = 50, // used to determine how far recursion can go in RayColor
+                background = new ColorV2(0, 0, 0),
+
+                vfov = 40, // field of view, basicallly zooming in and out 
+
+                lookFrom = new Point3(478, 278, -600),
+                lookAt = new Point3(278, 278, 0),
+                vup = new Vec3(0, 1, 0),
+
+                defocusAngle = 0,
+            };
+            camera.Render(world);
+        }
+
         static void Main(string[] args)
         {
-            switch (11)
+            switch (12)
             {
                 case 1: CheckeredSceneBook1(); break;
                 case 2: CheckeredSceneBook1_withEarth(); break;
@@ -611,6 +713,7 @@ namespace Raytracer
                 case 9: EmptyCornellBox(); break;
                 case 10: CornellBox(); break;
                 case 11: CornellSmoke(); break;
+                case 12: B2FinalScene(); break;
             }
         }
     }
