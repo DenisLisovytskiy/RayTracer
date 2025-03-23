@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,11 +18,20 @@ namespace Raytracer.BVH
         public static readonly AABB Empty = new AABB(Interval.Empty, Interval.Empty, Interval.Empty);
         public static readonly AABB Universe = new AABB(Interval.Universe, Interval.Universe, Interval.Universe);
 
+        private void PadToMinimums()
+        {
+            double delta = 0.0001;
+            if (x.Size() < delta) x = x.Expand(delta);
+            if (y.Size() < delta) y = y.Expand(delta);
+            if (z.Size() < delta) z = z.Expand(delta);
+        }
+
         public AABB(Interval x, Interval y, Interval z)
         {
             this.x = x;
             this.y = y;
             this.z = z;
+            PadToMinimums();
         }
 
         public AABB(Point3 a, Point3 b)
@@ -31,6 +41,7 @@ namespace Raytracer.BVH
             x = (a.X <= b.X) ? new Interval(a.X, b.X) : new Interval(b.X, a.X);
             y = (a.Y <= b.Y) ? new Interval(a.Y, b.Y) : new Interval(b.Y, a.Y);
             z = (a.Z <= b.Z) ? new Interval(a.Z, b.Z) : new Interval(b.Z, a.Z);
+            PadToMinimums();
         }
 
         public AABB(AABB box0, AABB box1)
@@ -84,6 +95,16 @@ namespace Raytracer.BVH
                 return x.Size() > z.Size() ? 0 : 2;
             else
                 return y.Size() > z.Size() ? 1 : 2;
+        }
+
+        public static AABB operator +(AABB bbox, Vec3 offset)
+        {
+            return new AABB(bbox.x + offset.X, bbox.y + offset.Y, bbox.z + offset.Z);
+        }
+
+        public static AABB operator +(Vec3 offset, AABB bbox)
+        {
+            return bbox + offset;
         }
     }
 }

@@ -21,6 +21,7 @@ namespace Raytracer.SceneElements
         public int imageWidth = 100;
         public int samplesPerPixel = 10;
         public int maxDepth = 10;
+        public ColorV2 background;
 
         public double vfov = 90;  // Vertical view angle (field of view)
         public Point3 lookFrom = new Point3(0, 0, 0);   // Point camera is looking from
@@ -193,7 +194,7 @@ namespace Raytracer.SceneElements
             return cameraCenter + (p.X * defocusDiskU) + (p.Y * defocusDiskV);
         }
 
-        public static ColorV2 RayColor(Ray ray, int depth, IHittable world)
+        public ColorV2 RayColor(Ray ray, int depth, IHittable world)
         {
             // If we've exceeded the ray bounce limit, no more light is gathered.
             if (depth <= 0)
@@ -201,21 +202,24 @@ namespace Raytracer.SceneElements
 
             HitRecord record = default; // Structs need explicit initialization
 
-            if (world.Hit(ray, new Interval(0.001, double.PositiveInfinity), ref record))
+            //if nothing is hit then we draw background color
+            if(!world.Hit(ray, new Interval(0.001, double.PositiveInfinity), ref record))
             {
-                Ray scattered;
-                ColorV2 attenuation;
-                if (record.material.Scatter(ray, record, out attenuation, out scattered))
-                {
-                    return attenuation * RayColor(scattered, depth - 1, world);
-                }
-                return new ColorV2(0, 0, 0);
+                return background;
             }
 
-            Vec3 unitDirection = Vec3.UnitVector(ray.Direction);
-            double a = 0.5 * (unitDirection.Y + 1.0);
+            Ray scattered;
+            ColorV2 attenuation;
+            ColorV2 colorFromEmmision = record.material.Emmited(record.U, record.V, record.P);
 
-            return (1.0 - a) * new ColorV2(1.0, 1.0, 1.0) + a * new ColorV2(0.5, 0.7, 1.0);
+            if(!record.material.Scatter(ray, record,out attenuation,out scattered))
+            {
+                return colorFromEmmision;
+            }
+
+            ColorV2 colorFromScatter = attenuation * RayColor(scattered, depth-1, world);
+
+            return colorFromEmmision + colorFromScatter;
         }
     }
 }

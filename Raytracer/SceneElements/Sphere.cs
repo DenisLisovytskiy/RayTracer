@@ -56,9 +56,29 @@ namespace Raytracer.SceneElements
             record.P = ray.At(record.T);
             Vec3 outwardNormal = (record.P - Center) / Radius;
             record.SetFaceNormal(ray, outwardNormal);
-            record.material = material;
+            GetSphereUV(outwardNormal, out record.U, out record.V);
+            record.material = material; 
 
             return true;
         }
+        private static void GetSphereUV(Point3 p, out double u, out double v)
+        {
+            // p: a given point on the sphere of radius one, centered at the origin.
+            // u: returned value [0,1] of angle around the Y axis from X=-1.
+            // v: returned value [0,1] of angle from Y=-1 to Y=+1.
+
+            // < 1 0 0 > yields < 0.50 0.50 >    <-1  0  0> yields <0.00 0.50>
+            // <0 1 0> yields <0.50 1.00>    < 0 -1  0> yields <0.50 0.00>
+            // <0 0 1> yields <0.25 0.50>     < 0  0 -1> yields <0.75 0.50>
+
+            // Calculate theta and phi
+            double theta = Math.Acos(-p.Y); // Angle from the Y-axis
+            double phi = Math.Atan2(-p.Z, p.X) + Math.PI; // Angle around the Y-axis
+
+            // Calculate UV coordinates
+            u = phi / (2 * Math.PI);
+            v = theta / Math.PI; // Scale theta to [0,1]
+        }
+
     }
 }
